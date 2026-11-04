@@ -7,16 +7,28 @@ const EMBEDDING_MODEL = "doubao-embedding-vision-251215";
 const EMBEDDING_DIMENSIONS = 1024;
 
 export interface KnowledgeSnippet {
+  id: string;
   title: string;
   category: string;
   content: string;
+  examType: string | null;
+  sourceType: string | null;
+  sourceUrl: string | null;
+  verifiedAt: Date | null;
+  effectiveDate: Date | null;
   score: number;
 }
 
 interface VectorSearchRow {
+  id: string;
   title: string;
   category: string;
   content: string;
+  examType: string | null;
+  sourceType: string | null;
+  sourceUrl: string | null;
+  verifiedAt: Date | null;
+  effectiveDate: Date | null;
   similarity: number;
 }
 
@@ -47,9 +59,15 @@ export async function searchRelevantKnowledge(
     // 2. pgvector 相似度查询
     const rows = await prisma.$queryRaw<VectorSearchRow[]>`
       SELECT
+        kd.id,
         kd.title,
         kd.category,
         kc.content,
+        kd."examType",
+        kd."sourceType",
+        kd."sourceUrl",
+        kd."verifiedAt",
+        kd."effectiveDate",
         1 - (kc.embedding <=> ${queryVector}::vector) AS similarity
       FROM "KnowledgeChunk" kc
       JOIN "KnowledgeDocument" kd ON kd.id = kc."documentId"
@@ -60,10 +78,16 @@ export async function searchRelevantKnowledge(
 
     // 3. 格式化结果，相似度转为百分制分数
     return rows.map((row) => ({
+      id: row.id,
       title: row.title,
       category: row.category,
       content:
         row.content.length > 400 ? row.content.slice(0, 400) + "…" : row.content,
+      examType: row.examType,
+      sourceType: row.sourceType,
+      sourceUrl: row.sourceUrl,
+      verifiedAt: row.verifiedAt,
+      effectiveDate: row.effectiveDate,
       score: Math.round(row.similarity * 100),
     }));
   } catch (e) {
@@ -96,7 +120,17 @@ async function fallbackKeywordSearch(
       ],
     },
     take: 20,
-    select: { title: true, category: true, content: true },
+    select: {
+      id: true,
+      title: true,
+      category: true,
+      content: true,
+      examType: true,
+      sourceType: true,
+      sourceUrl: true,
+      verifiedAt: true,
+      effectiveDate: true,
+    },
   });
 
   const scored = docs.map((doc) => {
@@ -116,10 +150,16 @@ async function fallbackKeywordSearch(
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((s) => ({
+      id: s.id,
       title: s.title,
       category: s.category,
       content:
         s.content.length > 400 ? s.content.slice(0, 400) + "…" : s.content,
+      examType: s.examType,
+      sourceType: s.sourceType,
+      sourceUrl: s.sourceUrl,
+      verifiedAt: s.verifiedAt,
+      effectiveDate: s.effectiveDate,
       score: s.score,
     }));
 }

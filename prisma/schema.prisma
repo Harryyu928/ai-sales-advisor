@@ -68,6 +68,12 @@ model User {
   knowledgeDocuments   KnowledgeDocument[]
   courseProducts       CourseProduct[]
   auditLogs            AuditLog[]
+  conversationAnalyses ConversationAnalysis[]
+  customerFacts        CustomerFact[]
+  savedReplies         SavedReply[]
+  followUpTasks        FollowUpTask[]
+  studyPlans           StudyPlan[]
+  salesMaterials       SalesMaterial[]
 }
 
 model Session {
@@ -97,34 +103,34 @@ model AdvisorProfile {
 }
 
 model StyleExample {
-  id              String          @id @default(cuid())
+  id              String           @id @default(cuid())
   userId          String
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   customerContext String? // 客户问题 / 上下文
   advisorReply    String // 真实顾问回复
   source          String? // screenshot / paste / ai_edit / confirmed
   sourceImageId   String?
   sourceImage     ScreenshotAsset? @relation(fields: [sourceImageId], references: [id], onDelete: SetNull)
-  status          String          @default("ACTIVE") // ACTIVE / EXCLUDED
+  status          String           @default("ACTIVE") // ACTIVE / EXCLUDED
   tags            Json?
-  createdAt       DateTime        @default(now())
+  createdAt       DateTime         @default(now())
 
   @@index([userId, status])
   @@index([userId, createdAt])
 }
 
 model StyleProfileVersion {
-  id              String           @id @default(cuid())
-  userId          String
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  version         Int
-  profile         Json // 风格画像内容（称呼、口头语、句式、长度、情绪表达等）
-  sampleCount     Int              @default(0)
-  confidence      Float? // 风格稳定性置信度
-  note            String?
-  createdAt       DateTime         @default(now())
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  version     Int
+  profile     Json // 风格画像内容（称呼、口头语、句式、长度、情绪表达等）
+  sampleCount Int      @default(0)
+  confidence  Float? // 风格稳定性置信度
+  note        String?
+  createdAt   DateTime @default(now())
 
-  advisorProfiles AdvisorProfile[]
+  advisorProfiles  AdvisorProfile[]
   replyGenerations ReplyGeneration[]
 
   @@unique([userId, version])
@@ -134,59 +140,73 @@ model StyleProfileVersion {
 // ---------- 客户与沟通记录 ----------
 
 model Customer {
-  id               String    @id @default(cuid())
-  userId           String
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  code             String // 客户代号（昵称 / 编号）
-  contactRole      String? // 学生 / 家长 / 未知
-  targetCountry    String?
-  applicationStage String? // 申请阶段
-  targetExam       String?
-  targetScore      String?
-  currentLevel     String? // 现有语言基础
-  plannedExamDate  DateTime?
-  trainingNeeds    String?
-  budgetRange      String?
-  concerns         String? // 当前顾虑
-  salesStage       String? // 咨询阶段
-  summary          String? // 咨询摘要（长对话摘要）
-  lastContactAt    DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id                    String    @id @default(cuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code                  String // 客户代号（昵称 / 编号）
+  contactRole           String? // 学生 / 家长 / 未知
+  targetCountry         String?
+  targetSchool          String? // 目标院校
+  targetMajor           String? // 目标专业
+  applicationStage      String? // 申请阶段
+  targetExam            String?
+  targetScore           String?
+  existingScore         String? // 已有考试成绩
+  currentLevel          String? // 现有语言基础
+  plannedExamDate       DateTime?
+  plannedEnrollmentDate DateTime? // 计划入学时间
+  trainingNeeds         String?
+  budgetRange           String?
+  concerns              String? // 当前顾虑
+  confirmedNextStep     String? // 已确认的下一步安排
+  salesStage            String? // 咨询阶段
+  summary               String? // 咨询摘要（长对话摘要）
+  lastContactAt         DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-  conversations Conversation[]
+  conversations    Conversation[]
   replyGenerations ReplyGeneration[]
+  facts            CustomerFact[]
+  savedReplies     SavedReply[]
+  followUpTasks    FollowUpTask[]
+  studyPlans       StudyPlan[]
 
   @@index([userId])
   @@index([userId, updatedAt])
 }
 
 model Conversation {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  customerId  String?
-  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  title       String?
-  summary     String?
-  source      String? // 来源：wechat / manual / web
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerId      String?
+  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  title           String?
+  summary         String?
+  source          String? // 来源：wechat / manual / web
   recognitionMeta Json? // 识别元数据（模型、耗时、不确定项）
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  messages    ChatMessage[]
-  screenshots ScreenshotAsset[]
+  messages         ChatMessage[]
+  screenshots      ScreenshotAsset[]
   replyGenerations ReplyGeneration[]
+  analyses         ConversationAnalysis[]
+  facts            CustomerFact[]
+  savedReplies     SavedReply[]
+  followUpTasks    FollowUpTask[]
+  studyPlans       StudyPlan[]
 
   @@index([userId, updatedAt])
   @@index([customerId])
 }
 
 model ChatMessage {
-  id                String        @id @default(cuid())
+  id                String           @id @default(cuid())
   conversationId    String
-  conversation      Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  senderRole        SenderRole    @default(UNKNOWN)
+  conversation      Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderRole        SenderRole       @default(UNKNOWN)
   content           String?
   timestamp         DateTime?
   sequence          Int
@@ -194,32 +214,32 @@ model ChatMessage {
   sourceImage       ScreenshotAsset? @relation(fields: [sourceImageId], references: [id], onDelete: SetNull)
   confidence        Float? // AI 识别置信度
   note              String? // 识别备注（如"发言方不确定"）
-  manuallyCorrected Boolean       @default(false)
-  createdAt         DateTime      @default(now())
+  manuallyCorrected Boolean          @default(false)
+  createdAt         DateTime         @default(now())
 
   @@index([conversationId, sequence])
   @@index([sourceImageId])
 }
 
 model ScreenshotAsset {
-  id                  String          @id @default(cuid())
+  id                  String        @id @default(cuid())
   userId              String
-  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   conversationId      String?
-  conversation        Conversation?   @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  conversation        Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
   originalName        String
   mimeType            String
   sizeBytes           Int
   storagePath         String // 相对受保护存储根目录的路径
   width               Int?
   height              Int?
-  status              String          @default("UPLOADED") // UPLOADED / ANALYZED / FAILED
+  status              String        @default("UPLOADED") // UPLOADED / ANALYZED / FAILED
   contentHash         String? // 内容哈希，用于多图去重
-  keepAfterProcessing Boolean         @default(true)
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+  keepAfterProcessing Boolean       @default(true)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 
-  messages ChatMessage[]
+  messages      ChatMessage[]
   styleExamples StyleExample[]
 
   @@index([userId, createdAt])
@@ -246,10 +266,15 @@ model ReplyGeneration {
   styleProfileVersion   StyleProfileVersion? @relation(fields: [styleProfileVersionId], references: [id], onDelete: SetNull)
   modelVersion          String?
   latencyMs             Int?
+  qualityCheck          Json? // 智能质检结果：{passed, issues[], warnings[], autoFixed}
+  timingBreakdown       Json? // 各环节真实耗时（检索/分析/生成等）
+  isCollected           Boolean              @default(false) // 是否收藏为优秀话术
+  effectiveFlag         Boolean              @default(false) // 是否确认沟通效果好
   status                String               @default("GENERATED") // GENERATED / REGENERATED / FAILED
   createdAt             DateTime             @default(now())
 
-  feedback ReplyFeedback?
+  feedback   ReplyFeedback?
+  savedReply SavedReply?
 
   @@index([userId, createdAt])
   @@index([conversationId])
@@ -300,14 +325,14 @@ model KnowledgeDocument {
 }
 
 model KnowledgeChunk {
-  id         String            @id @default(cuid())
+  id         String                       @id @default(cuid())
   documentId String
-  document   KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document   KnowledgeDocument            @relation(fields: [documentId], references: [id], onDelete: Cascade)
   chunkIndex Int
   content    String
   embedding  Unsupported("vector(1024)")? // pgvector 向量，知识检索阶段启用
   tokenCount Int?
-  createdAt  DateTime          @default(now())
+  createdAt  DateTime                     @default(now())
 
   @@index([documentId, chunkIndex])
 }
@@ -348,4 +373,142 @@ model AuditLog {
   @@index([userId, createdAt])
   @@index([entityType, entityId])
   @@index([createdAt])
+}
+
+// ============================================================
+// V2.0 增量表（不改动既有表的业务语义，仅新增）
+// ============================================================
+
+// ---------- 客户事实与来源（功能4/5：事实/推测区分、来源追踪、矛盾检测）----------
+model CustomerFact {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerId     String
+  customer       Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  fieldKey       String // 字段标识：contactRole/targetCountry/targetExam/targetScore/budgetRange...
+  value          String // 事实值
+  factType       String // CONFIRMED 明确事实 / INFERRED 可能性推测
+  sourceType     String // conversation 对话提取 / manual 手动录入 / confirmed 人工确认
+  confidence     Float? // 推测置信度（0-1）
+  status         String // ACTIVE 当前有效 / SUPERSEDED 已被新值取代 / DISPUTED 矛盾待确认
+  note           String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([customerId, fieldKey])
+  @@index([userId, status])
+  @@index([conversationId])
+}
+
+// ---------- 客户沟通分析（功能1：需求/顾虑/阶段，结果可复用）----------
+model ConversationAnalysis {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  analysis       Json // 完整结构化分析（显性需求/潜在顾虑/态度/阶段/确认信息/沟通方向）
+  modelVersion   String?
+  latencyMs      Int?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+  @@index([userId, createdAt])
+}
+
+// ---------- 优秀话术库（功能3：收藏/发送/效果好四态、相似检索）----------
+model SavedReply {
+  id                String                       @id @default(cuid())
+  userId            String
+  user              User                         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerId        String?
+  customer          Customer?                    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  conversationId    String?
+  conversation      Conversation?                @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  replyGenerationId String?                      @unique
+  replyGeneration   ReplyGeneration?             @relation(fields: [replyGenerationId], references: [id], onDelete: SetNull)
+  content           String // 话术内容
+  questionType      String? // 客户问题类型
+  examType          String? // 适用考试
+  stage             String? // 咨询阶段
+  customerConcern   String? // 主要客户顾虑
+  strategy          String? // 回复策略
+  styleTraits       Json? // 个人表达特点
+  customerContext   String? // 对应的客户上下文
+  status            String                       @default("COLLECTED") // COLLECTED 收藏 / SENT 已发送 / EFFECTIVE 效果好
+  favorite          Boolean                      @default(true)
+  embedding         Unsupported("vector(1024)")? // 相似场景检索向量
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+
+  @@index([userId, status])
+  @@index([customerId])
+  @@index([conversationId])
+}
+
+// ---------- 客户跟进待办（功能6）----------
+model FollowUpTask {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerId     String?
+  customer       Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  title          String // 跟进事项
+  description    String?
+  taskType       String // CUSTOMER_PROMISED 客户约定 / ADVISOR_PROMISED 顾问承诺 / AI_SUGGESTED AI建议
+  source         String // AUTO 自动提取 / CONFIRMED 确认后进入 / MANUAL 手动创建
+  dueDate        DateTime? // 跟进日期
+  status         String        @default("PENDING") // PENDING 待办 / DONE 已完成 / CANCELLED 已取消
+  completedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId, status])
+  @@index([userId, dueDate])
+  @@index([customerId])
+}
+
+// ---------- 语言备考方案（功能7）----------
+model StudyPlan {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerId     String?
+  customer       Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  planData       Json // 完整备考方案（目标/待补充/阶段/重点/评估节点/风险）
+  wechatVersion  String? // 简洁微信沟通版本
+  modelVersion   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([customerId])
+}
+
+// ---------- 常用销售资料（功能9）----------
+model SalesMaterial {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title               String
+  materialType        String // COURSE_INTRO 课程介绍 / PRICE_LIST 价格表 / ONE_ON_ONE 一对一 / GROUP_CLASS 班课 / ASSESSMENT 测评 / TRIAL 试听 / SERVICE_SCOPE 服务范围 / FAQ 常见问题 / ADVANTAGE 机构优势
+  content             String? // 可复制文字
+  fileUrl             String? // 可查看文件链接
+  filePath            String? // 受保护存储路径
+  favorite            Boolean  @default(false)
+  knowledgeDocumentId String? // 关联知识库文档
+  status              String   @default("APPROVED") // APPROVED 已审核 / PENDING 待审核
+  tags                Json?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([userId, materialType])
+  @@index([userId, favorite])
 }

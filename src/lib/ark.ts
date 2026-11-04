@@ -25,6 +25,8 @@ export interface ArkChatOptions {
   maxTokens?: number;
   jsonMode?: boolean;
   timeoutMs?: number;
+  /** 思考链控制：默认关闭以保证响应速度；需要深度推理时显式 enabled */
+  thinking?: { type: "enabled" | "disabled"; budgetTokens?: number };
 }
 
 export interface ArkChatResult {
@@ -101,6 +103,11 @@ export class ArkClient {
       stream: false,
     };
     if (opts.jsonMode) body.response_format = { type: "json_object" };
+    if (opts.thinking) {
+      const thinking: Record<string, unknown> = { type: opts.thinking.type };
+      if (opts.thinking.budgetTokens) thinking.budget_tokens = opts.thinking.budgetTokens;
+      body.thinking = thinking;
+    }
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? ARK_DEFAULT_TIMEOUT_MS);

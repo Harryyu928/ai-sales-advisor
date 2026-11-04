@@ -1,10 +1,11 @@
-// POST /api/conversations/[id]/generate-reply —— AI 生成建议回复
+// POST /api/conversations/[id]/generate-reply —— AI 生成建议回复（V2.0 全流程）
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import { ApiError, handle } from "@/lib/api";
-import { generateReply } from "@/services/reply-service";
+import { generateReplyV2 } from "@/services/reply-service";
 import type { StylePreset } from "@/lib/reply-prompts";
+
+const VALID_STYLES: StylePreset[] = ["brief", "professional", "natural", "gentle"];
 
 export async function POST(
   req: NextRequest,
@@ -17,24 +18,16 @@ export async function POST(
     const { id } = await params;
     const body = await req.json().catch(() => ({}));
     const style = (body.style as StylePreset) || "professional";
+    if (!VALID_STYLES.includes(style)) throw new ApiError(400, "无效的回复风格");
+    const applyMemory = body.applyMemory !== false; // 默认自动应用客户事实
+    const forceAnalysis = body.forceAnalysis === true;
 
-    // 查询对话（必须属于当前用户）
-    const conversation = await prisma.conversation.findUnique({
-      where: { id, userId: user.id },
-      include: {
-        messages: { orderBy: { sequence: "asc" } },
-      },
-    });
-    if (!conversation) throw new ApiError(404, "对话不存在");
-
-    const result = await generateReply({
-      conversationTitle: conversation.title || "",
-      messages: conversation.messages.map((m) => ({
-        role: m.senderRole as "ADVISOR" | "CUSTOMER" | "UNKNOWN",
-        content: m.content ?? "",
-        sequence: m.sequence,
-      })),
+    const result = await generateReplyV2({
+      conversationId: id,
+      userId: user.id,
       style,
+      forceAnalysis,
+      applyMemory,
     });
 
     return NextResponse.json({ ok: true, data: result });
