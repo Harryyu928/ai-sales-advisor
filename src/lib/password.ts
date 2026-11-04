@@ -1,0 +1,12 @@
+// 密码哈希与校验（bcryptjs，纯 JS 实现，跨平台无编译依赖）
+import { hash, compare } from "bcryptjs";
+
+const SALT_ROUNDS = 10;
+
+export function hashPassword(password: string): Promise<string> {
+  return hash(password, SALT_ROUNDS);
+}
+
+export function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
+  return compare(password, passwordHash);
+}

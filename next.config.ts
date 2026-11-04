@@ -1,0 +1,11 @@
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  experimental: {
+    // 中间件会克隆请求体（默认上限 10MB）；多图上传场景需要调大
+    // 单个文件上限仍由业务代码校验（10MB），见 src/lib/storage.ts
+    middlewareClientMaxBodySize: "25mb",
+  },
+};
+
+export default nextConfig;

@@ -1,0 +1,351 @@
+// ============================================================
+// 国际教育语言培训 AI 销售顾问助手 — 数据库 Schema
+// 覆盖规格书第十二章的 14 张核心表 + 会话表（Session，用于登录态）
+// 说明：
+//   - 用户数据按 userId 隔离，所有业务表均带 userId 归属字段
+//   - KnowledgeChunk.embedding 使用 pgvector(vector(1024))，
+//     需在数据库中启用扩展：CREATE EXTENSION IF NOT EXISTS vector;
+//   - 金额以"分"(priceCents)存储，避免浮点误差
+// ============================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- 枚举 ----------
+
+enum UserRole {
+  ADMIN // 管理员
+  ADVISOR // 销售顾问
+}
+
+enum UserStatus {
+  ACTIVE // 正常
+  DISABLED // 停用
+}
+
+enum SenderRole {
+  ADVISOR // 顾问本人
+  CUSTOMER // 客户
+  UNKNOWN // 未知身份
+}
+
+enum KnowledgeStatus {
+  APPROVED // 已审核
+  PENDING_APPROVAL // 待审核
+  PENDING_VERIFY // 待核实
+  EXPIRED // 已失效
+  REJECTED // 已驳回
+}
+
+// ---------- 账号 ----------
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         UserRole   @default(ADVISOR)
+  status       UserStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  profile              AdvisorProfile?
+  sessions             Session[]
+  customers            Customer[]
+  conversations        Conversation[]
+  screenshotAssets     ScreenshotAsset[]
+  replyGenerations     ReplyGeneration[]
+  replyFeedbacks       ReplyFeedback[]
+  styleExamples        StyleExample[]
+  styleProfileVersions StyleProfileVersion[]
+  knowledgeDocuments   KnowledgeDocument[]
+  courseProducts       CourseProduct[]
+  auditLogs            AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ---------- 顾问资料与个人风格 ----------
+
+model AdvisorProfile {
+  id                    String               @id @default(cuid())
+  userId                String               @unique
+  user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replyStyle            Json? // 回复偏好（句长、语气、分段习惯等）
+  styleProfileVersionId String?
+  styleProfileVersion   StyleProfileVersion? @relation(fields: [styleProfileVersionId], references: [id], onDelete: SetNull)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+}
+
+model StyleExample {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerContext String? // 客户问题 / 上下文
+  advisorReply    String // 真实顾问回复
+  source          String? // screenshot / paste / ai_edit / confirmed
+  sourceImageId   String?
+  sourceImage     ScreenshotAsset? @relation(fields: [sourceImageId], references: [id], onDelete: SetNull)
+  status          String          @default("ACTIVE") // ACTIVE / EXCLUDED
+  tags            Json?
+  createdAt       DateTime        @default(now())
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+}
+
+model StyleProfileVersion {
+  id              String           @id @default(cuid())
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  version         Int
+  profile         Json // 风格画像内容（称呼、口头语、句式、长度、情绪表达等）
+  sampleCount     Int              @default(0)
+  confidence      Float? // 风格稳定性置信度
+  note            String?
+  createdAt       DateTime         @default(now())
+
+  advisorProfiles AdvisorProfile[]
+  replyGenerations ReplyGeneration[]
+
+  @@unique([userId, version])
+  @@index([userId, createdAt])
+}
+
+// ---------- 客户与沟通记录 ----------
+
+model Customer {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  code             String // 客户代号（昵称 / 编号）
+  contactRole      String? // 学生 / 家长 / 未知
+  targetCountry    String?
+  applicationStage String? // 申请阶段
+  targetExam       String?
+  targetScore      String?
+  currentLevel     String? // 现有语言基础
+  plannedExamDate  DateTime?
+  trainingNeeds    String?
+  budgetRange      String?
+  concerns         String? // 当前顾虑
+  salesStage       String? // 咨询阶段
+  summary          String? // 咨询摘要（长对话摘要）
+  lastContactAt    DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  conversations Conversation[]
+  replyGenerations ReplyGeneration[]
+
+  @@index([userId])
+  @@index([userId, updatedAt])
+}
+
+model Conversation {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  title       String?
+  summary     String?
+  source      String? // 来源：wechat / manual / web
+  recognitionMeta Json? // 识别元数据（模型、耗时、不确定项）
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  messages    ChatMessage[]
+  screenshots ScreenshotAsset[]
+  replyGenerations ReplyGeneration[]
+
+  @@index([userId, updatedAt])
+  @@index([customerId])
+}
+
+model ChatMessage {
+  id                String        @id @default(cuid())
+  conversationId    String
+  conversation      Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderRole        SenderRole    @default(UNKNOWN)
+  content           String?
+  timestamp         DateTime?
+  sequence          Int
+  sourceImageId     String?
+  sourceImage       ScreenshotAsset? @relation(fields: [sourceImageId], references: [id], onDelete: SetNull)
+  confidence        Float? // AI 识别置信度
+  note              String? // 识别备注（如"发言方不确定"）
+  manuallyCorrected Boolean       @default(false)
+  createdAt         DateTime      @default(now())
+
+  @@index([conversationId, sequence])
+  @@index([sourceImageId])
+}
+
+model ScreenshotAsset {
+  id                  String          @id @default(cuid())
+  userId              String
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId      String?
+  conversation        Conversation?   @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  originalName        String
+  mimeType            String
+  sizeBytes           Int
+  storagePath         String // 相对受保护存储根目录的路径
+  width               Int?
+  height              Int?
+  status              String          @default("UPLOADED") // UPLOADED / ANALYZED / FAILED
+  contentHash         String? // 内容哈希，用于多图去重
+  keepAfterProcessing Boolean         @default(true)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  messages ChatMessage[]
+  styleExamples StyleExample[]
+
+  @@index([userId, createdAt])
+}
+
+// ---------- AI 回复与反馈学习 ----------
+
+model ReplyGeneration {
+  id                    String               @id @default(cuid())
+  userId                String
+  user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId        String?
+  conversation          Conversation?        @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  customerId            String?
+  customer              Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  inputSnapshot         Json? // 输入上下文快照
+  replyText             String
+  customerIntent        Json? // 客户意图分析
+  salesStage            String? // 咨询阶段
+  nextAction            String?
+  knowledgeReferences   Json? // 知识来源引用
+  uncertaintyFlags      Json? // 不确定信息提醒
+  styleProfileVersionId String?
+  styleProfileVersion   StyleProfileVersion? @relation(fields: [styleProfileVersionId], references: [id], onDelete: SetNull)
+  modelVersion          String?
+  latencyMs             Int?
+  status                String               @default("GENERATED") // GENERATED / REGENERATED / FAILED
+  createdAt             DateTime             @default(now())
+
+  feedback ReplyFeedback?
+
+  @@index([userId, createdAt])
+  @@index([conversationId])
+}
+
+model ReplyFeedback {
+  id                String          @id @default(cuid())
+  replyGenerationId String          @unique
+  generation        ReplyGeneration @relation(fields: [replyGenerationId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  editedText        String? // 顾问修改后的版本
+  finalText         String? // 确认实际发送的版本
+  sentAt            DateTime?
+  diffSummary       Json? // AI 生成与最终版本的差异分析
+  usedAsStyleSample Boolean         @default(false)
+  createdAt         DateTime        @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ---------- 知识库 ----------
+
+model KnowledgeDocument {
+  id               String          @id @default(cuid())
+  title            String
+  category         String // IELTS / TOEFL / SALES / COURSE / ...
+  examType         String?
+  content          String // 解析后的正文
+  sourceType       String // official / manual / upload / internal
+  sourceUrl        String?
+  effectiveDate    DateTime?
+  verifiedAt       DateTime?
+  reviewStatus     KnowledgeStatus @default(PENDING_APPROVAL)
+  version          Int             @default(1)
+  applicableRegion String?
+  tags             Json?
+  uploadedById     String?
+  uploadedBy       User?           @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  chunks KnowledgeChunk[]
+
+  @@index([category, reviewStatus])
+  @@index([examType])
+  @@index([reviewStatus])
+}
+
+model KnowledgeChunk {
+  id         String            @id @default(cuid())
+  documentId String
+  document   KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  chunkIndex Int
+  content    String
+  embedding  Unsupported("vector(1024)")? // pgvector 向量，知识检索阶段启用
+  tokenCount Int?
+  createdAt  DateTime          @default(now())
+
+  @@index([documentId, chunkIndex])
+}
+
+// ---------- 课程产品 ----------
+
+model CourseProduct {
+  id          String   @id @default(cuid())
+  name        String
+  category    String?
+  priceCents  Int? // 价格（分）
+  hours       Int?
+  description String?
+  services    Json? // 服务项目
+  policies    Json? // 政策（退费 / 转班等）
+  status      String   @default("ACTIVE")
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category, status])
+}
+
+// ---------- 审计日志 ----------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String // LOGIN / UPLOAD_SCREENSHOT / CREATE_KNOWLEDGE ...
+  entityType String?
+  entityId   String?
+  detail     Json?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
