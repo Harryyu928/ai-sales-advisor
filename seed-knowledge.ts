@@ -118,7 +118,7 @@ async function main() {
       console.log(`✅ ${item.title}`);
     } catch (e) {
       failed++;
-      console.log(`❌ ${item.title}: ${e.message}`);
+      console.log(`❌ ${item.title}: ${(e as Error).message}`);
     }
   }
 

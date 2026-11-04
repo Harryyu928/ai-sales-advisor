@@ -45,3 +45,9 @@ next-env.d.ts
 
 # 受保护截图存储（开发环境，生产使用私有对象存储）
 /storage/
+
+# 数据库备份
+/backups/
+
+# 种子脚本
+seed-knowledge.ts
