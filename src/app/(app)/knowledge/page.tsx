@@ -96,7 +96,7 @@ export default async function KnowledgePage() {
       {/* 搜索区 */}
       <div className="flex flex-col gap-3 sm:flex-row">
         <KnowledgeSearch />
-        <NewKnowledgeButton onSaved={() => {}} />
+        <NewKnowledgeButton />
       </div>
 
       {/* 数据概览 */}

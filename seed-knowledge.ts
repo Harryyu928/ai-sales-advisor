@@ -1,5 +1,15 @@
 // 批量知识录入脚本
 // 销售理论 + 话术风格 + 考试知识 + 升学申请
+import { PrismaClient } from "./src/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({
+    connectionString:
+      "postgresql://postgres.npylkrsppckumxbnoyez:EZjttGC2v9RviU0m@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres",
+  }),
+});
+
 const KNOWLEDGE = [
   // ===== 一、销售心理学与理论模型（15条）=====
   { title: "SPIN销售法：提问式销售模型", category: "SALES", content: "SPIN销售法由尼尔·雷克汉姆提出：Situation(现状问题)、Problem(问题问题)、Implication(暗示问题)、Need-Payoff(需求-回报问题)。通过层层提问引导客户自己发现需求，而非直接推销。高端教育咨询特别适用。", sourceType: "official", sourceUrl: "https://www.gartner.com/", tags: ["销售理论", "SPIN", "提问技巧"] },
@@ -95,9 +105,6 @@ const KNOWLEDGE = [
 ];
 
 async function main() {
-  const { PrismaClient } = require("./src/generated/prisma");
-  const prisma = new PrismaClient();
-
   let success = 0;
   let failed = 0;
 
