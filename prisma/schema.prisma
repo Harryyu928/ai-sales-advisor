@@ -566,6 +566,7 @@ model CustomerDiagnostic {
   unknowns      Json?    // 未知问题清单 + 下一问推荐
   risks         Json?    // 成交障碍与风险
   actions       Json?    // 推荐行动（最多3个）
+  nextBestQuestion Json? // 当前最该问的一个问题
   timeline      Json?    // 变化时间线
   evidence      Json?    // 证据引用
   limitations   String?  // 分析限制说明
