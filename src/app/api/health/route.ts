@@ -18,6 +18,10 @@ export async function GET() {
     console.error("[health] 数据库检查失败:", e);
   }
 
+  console.log(
+    `[health] db=${dbOk ? "connected" : "error"} tableCount=${tableCount} ai=${aiConfigured ? "configured" : "not_configured"}`
+  );
+
   return NextResponse.json({
     ok: dbOk,
     status: dbOk ? "ok" : "degraded",
