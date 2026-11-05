@@ -4,6 +4,9 @@ import { getSessionUser } from "@/lib/auth";
 import { ApiError, handle } from "@/lib/api";
 import { getEffectAnalysis } from "@/services/effect-analysis-service";
 
+export const maxDuration = 60;
+export const runtime = "nodejs";
+
 export async function GET() {
   return handle(async () => {
     const user = await getSessionUser();
