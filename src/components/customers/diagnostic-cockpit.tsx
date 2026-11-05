@@ -202,7 +202,9 @@ export function DiagnosticCockpit({ customerId, customerName }: { customerId: st
   );
 
   const patterns = diag?.patterns || {};
-  const topRisk = (diag?.risks || []).find((r: any) => r.severity === "high") || (diag?.risks || [])[0];
+  // 首屏只突出真正的关单风险（category=closing），普通信息缺口不渲染成红色警报
+  const closingRisks = (diag?.risks || []).filter((r: any) => r.category === "closing" && r.severity === "high");
+  const topRisk = closingRisks[0] || (diag?.risks || []).find((r: any) => r.severity === "high");
   const topConcern = (diag?.concerns?.stated || [])[0];
   const topAction = (diag?.actions || [])[0];
 
@@ -318,10 +320,10 @@ export function DiagnosticCockpit({ customerId, customerName }: { customerId: st
                 </p>
               </div>
             </div>
-            <div className="rounded-2xl p-3" style={{ background: "var(--card)", border: `1px solid ${topRisk ? severityColor[topRisk.severity] : "var(--border)"}` }}>
-              <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>成交风险</p>
-              <p className="text-base font-semibold mt-0.5" style={{ color: topRisk ? severityColor[topRisk.severity] : "var(--foreground)" }}>
-                {diag.risks?.length || 0} 项
+            <div className="rounded-2xl p-3" style={{ background: "var(--card)", border: `1px solid ${closingRisks.length > 0 ? "#C0392B" : "var(--border)"}` }}>
+              <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>关单风险</p>
+              <p className="text-base font-semibold mt-0.5" style={{ color: closingRisks.length > 0 ? "#C0392B" : "var(--foreground)" }}>
+                {closingRisks.length > 0 ? `${closingRisks.length} 项紧急` : "暂无"}
               </p>
               {topRisk && <p className="text-xs mt-0.5 truncate" style={{ color: "var(--muted-foreground)" }}>{topRisk.name}</p>}
             </div>

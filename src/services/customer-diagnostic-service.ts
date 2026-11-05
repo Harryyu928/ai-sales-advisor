@@ -91,11 +91,23 @@ ${chatLines || "（无聊天记录）"}
     "hypotheses": [{"name":"待验证假设","reason":"为什么需要验证"}]
   },
   "unknowns": [{"field":"缺失信息","status":"not_asked|asked_no_answer|conflict","importance":"high|medium|low"}],
-  "nextBestQuestion": {"question":"当前最该问的一个问题","why":"为什么","script":"可直接发给客户的微信话术"},
-  "risks": [{"name":"风险","severity":"high|medium|low","evidence":"证据","evidenceIndex": 1,"impact":"可能影响","suggestion":"建议"}],
+  "nextBestQuestion": {
+    "question": "当前最该问的唯一主问题（只能一个，不要多个）",
+    "why": "为什么先问这个",
+    "script": "可直接发给客户的微信话术",
+    "followUpQuestions": ["后续排队问题，等客户回答后再逐个问，不要一次全抛"]
+  },
+  "risks": [{"name":"风险","category":"information|solution|trust|price|closing","severity":"high|medium|low","evidence":"证据","evidenceIndex": 1,"impact":"可能影响","suggestion":"建议"}],
   "actions": [{"name":"行动","reason":"原因","script":"微信话术"}],
   "limitations": "数据不足时的诚实说明"
 }
+
+风险分类说明：
+- information：信息缺口（不知道预算/时间/背景等），默认 severity=low，不要标成红色警报
+- solution：方案匹配风险（需求和课程不匹配）
+- trust：信任风险（客户犹豫/质疑/比较中）
+- price：价格风险（客户嫌贵/预算不足）
+- closing：真正的关单风险（客户明确说要再想想/要走了/不回了）
 
 重要规则：
 1. 只基于聊天证据分析，不得编造客户性格、爱好、预算、经济能力。
@@ -103,7 +115,9 @@ ${chatLines || "（无聊天记录）"}
 3. 没有证据的风险不要列。
 4. actions 最多3条。
 5. 所有判断要克制，宁可说"待观察"也不要下确定结论。
-6. evidenceIndex 必须是上面【聊天记录】中该行的序号（从1开始），用于追溯原始消息。`;
+6. evidenceIndex 必须是上面【聊天记录】中该行的序号（从1开始），用于追溯原始消息。
+7. nextBestQuestion.question 只能是一个问题，不要把多个问题塞进去。其他问题放 followUpQuestions。
+8. 普通信息缺口（不知道预算/时间/背景）标 category=information, severity=low，不要标成 high。只有客户明确表达要离开/不回复/拒绝时才标 category=closing, severity=high。`;
 }
 
 export async function runCustomerDiagnostic(customerId: string, userId: string): Promise<CustomerDiagnosticResult & { latencyMs: number; model: string }> {
