@@ -117,7 +117,8 @@ ${chatLines || "（无聊天记录）"}
 5. 所有判断要克制，宁可说"待观察"也不要下确定结论。
 6. evidenceIndex 必须是上面【聊天记录】中该行的序号（从1开始），用于追溯原始消息。
 7. nextBestQuestion.question 只能是一个问题，不要把多个问题塞进去。其他问题放 followUpQuestions。
-8. 普通信息缺口（不知道预算/时间/背景）标 category=information, severity=low，不要标成 high。只有客户明确表达要离开/不回复/拒绝时才标 category=closing, severity=high。`;
+8. 普通信息缺口（不知道预算/时间/背景）标 category=information, severity=low，不要标成 high。只有客户明确表达要离开/不回复/拒绝时才标 category=closing, severity=high。
+9. actions 和 nextBestQuestion 里的话术严禁过度承诺：禁止"保证录取""保过""一定能上""肯定来得及""百分百""稳录"等表述。可以说"我们会全力帮你准备""往年类似背景有成功案例"，但不要给确定性承诺。`;
 }
 
 export async function runCustomerDiagnostic(customerId: string, userId: string): Promise<CustomerDiagnosticResult & { latencyMs: number; model: string }> {
