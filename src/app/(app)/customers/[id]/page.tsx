@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth";
 import { ArrowLeft, Target, Clock, MessageCircle, FileText, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { DisputePanel } from "@/components/customers/dispute-panel";
+import { DiagnosticCockpit } from "@/components/customers/diagnostic-cockpit";
 
 export const metadata: Metadata = { title: "客户详情" };
 
@@ -87,6 +88,9 @@ export default async function CustomerDetailPage({
 
       {/* 待确认信息（有矛盾时才显示） */}
       <DisputePanel customerId={customer.id} />
+
+      {/* V7.0 客户诊断驾驶舱 */}
+      <DiagnosticCockpit customerId={customer.id} customerName={customer.code} />
 
       {/* 客户信息卡片 */}
       <div

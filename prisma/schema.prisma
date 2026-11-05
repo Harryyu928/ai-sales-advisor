@@ -548,3 +548,33 @@ model UserThemePreference {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
+
+// ---------- V7.0 客户全维度智能诊断驾驶舱 ----------
+model CustomerDiagnostic {
+  id            String   @id @default(cuid())
+  userId        String
+  customerId    String
+  version       Int      @default(1) // 诊断版本号，每次重新分析 +1
+  // 核心诊断结果（结构化 JSON）
+  salesStage    String?  // 当前咨询阶段
+  completeness  Float?   // 信息完整度 0-1
+  summary       String?  // 全景摘要
+  patterns      Json?    // 沟通与决策画像
+  interests     Json?    // 兴趣偏好
+  needs         Json?    // 已确认需求
+  concerns      Json?    // 顾虑（明确/待验证/处理状态）
+  unknowns      Json?    // 未知问题清单 + 下一问推荐
+  risks         Json?    // 成交障碍与风险
+  actions       Json?    // 推荐行动（最多3个）
+  timeline      Json?    // 变化时间线
+  evidence      Json?    // 证据引用
+  limitations   String?  // 分析限制说明
+  modelVersion  String?
+  latencyMs     Int?
+  isLatest      Boolean  @default(true) // 是否为最新版本
+  createdAt     DateTime @default(now())
+
+  @@index([customerId, isLatest])
+  @@index([userId, createdAt])
+  @@index([customerId, version])
+}
