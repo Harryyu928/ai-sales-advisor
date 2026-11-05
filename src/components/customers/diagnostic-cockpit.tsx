@@ -114,6 +114,47 @@ function Collapsible({ title, icon, children, defaultOpen = false }: {
   );
 }
 
+const STAGES = ["读取聊天", "提取事实", "识别盲区", "生成行动"];
+
+function DiagnosingProgress() {
+  const [stage, setStage] = useState(0);
+  useEffect(() => {
+    const timers = STAGES.map((_, i) =>
+      setTimeout(() => setStage(i + 1), (i + 1) * 10000)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+  return (
+    <div className="rounded-2xl p-6" style={{ background: "var(--card)", border: "1px solid var(--primary)" }}>
+      <p className="text-sm font-medium mb-4 text-center" style={{ color: "var(--primary-deep)" }}>
+        正在深度分析客户…
+      </p>
+      <div className="space-y-3">
+        {STAGES.map((label, i) => {
+          const done = i < stage;
+          const active = i === stage;
+          return (
+            <div key={label} className="flex items-center gap-3">
+              <div className="size-6 rounded-full flex items-center justify-center text-xs"
+                style={{
+                  background: done ? "var(--primary)" : active ? "var(--primary-light)" : "var(--background)",
+                  color: done ? "#fff" : active ? "var(--primary)" : "var(--muted-foreground)",
+                  border: `1px solid ${done || active ? "var(--primary)" : "var(--border)"}`,
+                }}>
+                {done ? <Check className="size-3.5" /> : active ? <RefreshCw className="size-3.5 animate-spin" /> : i + 1}
+              </div>
+              <span className="text-sm" style={{ color: done || active ? "var(--primary-deep)" : "var(--muted-foreground)" }}>
+                {label}
+              </span>
+              {active && <span className="text-xs animate-pulse" style={{ color: "var(--gold)" }}>…</span>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function DiagnosticCockpit({ customerId, customerName }: { customerId: string; customerName: string }) {
   const [diag, setDiag] = useState<Diagnostic | null>(null);
   const [versions, setVersions] = useState<VersionInfo[]>([]);
@@ -192,6 +233,8 @@ export function DiagnosticCockpit({ customerId, customerName }: { customerId: st
       </div>
 
       {error && <div className="p-3 rounded-lg text-xs" style={{ background: "#FDECEA", color: "#C0392B" }}>{error}</div>}
+
+      {diagnosing && <DiagnosingProgress />}
 
       {showHistory && versions.length > 1 && (
         <div className="rounded-2xl p-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
