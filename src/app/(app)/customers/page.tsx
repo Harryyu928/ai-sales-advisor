@@ -30,8 +30,11 @@ export default async function CustomersPage({
     where.OR = [
       { code: { contains: q } },
       { targetExam: { contains: q } },
+      { targetSchool: { contains: q } },
+      { targetMajor: { contains: q } },
       { salesStage: { contains: q } },
       { summary: { contains: q } },
+      { concerns: { contains: q } },
     ];
   }
 
@@ -72,7 +75,7 @@ export default async function CustomersPage({
           type="text"
           name="search"
           defaultValue={search ?? ""}
-          placeholder="搜索客户代号、目标考试或咨询阶段……"
+          placeholder="搜索客户、院校、专业、阶段或顾虑……"
           className="w-full rounded-[16px] py-3.5 pl-11 pr-4 text-sm outline-none"
           style={{ backgroundColor: "transparent", color: "var(--foreground)" }}
         />
