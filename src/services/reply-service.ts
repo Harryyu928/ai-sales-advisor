@@ -29,7 +29,7 @@ import {
   searchSimilarSavedReplies,
   formatSavedReplyContext,
 } from "@/services/saved-reply-service";
-import { applyCustomerFacts, type ApplyFactsResult } from "@/services/customer-memory-service";
+import { applyCustomerFacts, ensureCustomer, type ApplyFactsResult } from "@/services/customer-memory-service";
 import { prisma } from "@/lib/db";
 import { toPlainJson } from "@/lib/utils";
 
@@ -225,6 +225,17 @@ export async function generateReplyV2(
   const knowledgeContext = formatKnowledgeContext(knowledgeSnippets);
   const savedReplyContext = formatSavedReplyContext(similarReplies);
 
+  // 自动建档：对话尚未关联客户时，先建立客户档案，保证后续落库与记忆应用可关联
+  let activeCustomerId: string | null = conversation.customerId;
+  if (input.applyMemory && !activeCustomerId) {
+    const contactFact = analysis.customerFacts.find((f) => f.fieldKey === "contactRole");
+    activeCustomerId = await ensureCustomer(
+      input.userId,
+      contactFact?.value || "新客户",
+      input.conversationId
+    );
+  }
+
   // 2. 一次生成回复（融入分析结论、知识、案例、风格）
   const genStart = Date.now();
   const style = input.style;
@@ -263,7 +274,7 @@ export async function generateReplyV2(
     data: {
       userId: input.userId,
       conversationId: input.conversationId,
-      customerId: conversation.customerId,
+      customerId: activeCustomerId,
       inputSnapshot: toPlainJson({ messages }),
       replyText: finalReply,
       customerIntent: toPlainJson({
@@ -293,12 +304,12 @@ export async function generateReplyV2(
   });
   timing.persistence = Date.now() - persistStart;
 
-  // 5. 自动应用客户事实记忆（仅当关联客户且启用）
+  // 5. 自动应用客户事实记忆（建档后即可应用，含事实/推测分离与矛盾保护）
   let memory: ApplyFactsResult | null = null;
-  if (input.applyMemory && conversation.customerId) {
+  if (input.applyMemory && activeCustomerId) {
     memory = await applyCustomerFacts(
       input.userId,
-      conversation.customerId,
+      activeCustomerId,
       input.conversationId,
       analysis.customerFacts,
       analysis.contradictions
@@ -320,6 +331,6 @@ export async function generateReplyV2(
     timing,
     totalLatencyMs,
     model: genResult.model,
-    customerId: conversation.customerId,
+    customerId: activeCustomerId,
   };
 }

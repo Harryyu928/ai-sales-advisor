@@ -32,11 +32,15 @@ export default async function CustomerDetailPage({
   if (!customer) notFound();
 
   const infoLabels: [string, string | null | undefined][] = [
+    ["申请阶段", customer.applicationStage],
+    ["销售阶段", customer.salesStage],
+    ["目标国家", customer.targetCountry],
+    ["目标院校", customer.targetSchool],
+    ["目标专业", customer.targetMajor],
     ["目标考试", customer.targetExam],
     ["目标分数", customer.targetScore],
     ["当前水平", customer.currentLevel],
-    ["申请阶段", customer.applicationStage],
-    ["销售阶段", customer.salesStage],
+    ["预算范围", customer.budgetRange],
     ["主要顾虑", customer.concerns],
   ];
 
