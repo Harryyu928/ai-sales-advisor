@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Sparkles, Copy, Check, RefreshCw, Edit3, ChevronDown, Target, Flag, Lightbulb,
-  MessageCircle, Star, Send, ThumbsUp, BookMarked, AlertTriangle, Info,
+  MessageCircle, Star, Send, ThumbsUp, BookMarked, AlertTriangle, Info, Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { STYLE_PRESETS, type StylePreset } from "@/lib/reply-prompts";
@@ -70,6 +70,15 @@ interface ReplyResult {
   totalLatencyMs: number;
   model: string;
 }
+interface SimulationResponse {
+  tendency: string;
+  customerReply: string;
+  advisorTip: string;
+}
+interface SimulationResultData {
+  disclaimer: string;
+  responses: SimulationResponse[];
+}
 
 export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
   const [style, setStyle] = useState<StylePreset>("professional");
@@ -89,6 +98,11 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
   const [analysisOpen, setAnalysisOpen] = useState(false);
   const [evidenceOpen, setEvidenceOpen] = useState(false);
 
+  // 多轮客户沟通模拟（功能10）
+  const [simulation, setSimulation] = useState<SimulationResultData | null>(null);
+  const [simLoading, setSimLoading] = useState(false);
+  const [simOpen, setSimOpen] = useState(false);
+
   // 切换对话时重置
   useEffect(() => {
     setResult(null);
@@ -96,6 +110,8 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
     setSavedStatus(null);
     setEditing(false);
     setError(null);
+    setSimulation(null);
+    setSimOpen(false);
   }, [conversationId]);
 
   const currentText = editing ? draft : result?.reply ?? "";
@@ -182,6 +198,28 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
       setError((e as Error).message || "操作失败");
     } finally {
       setActionLoading(false);
+    }
+  }
+
+  // 多轮模拟：基于当前（可能编辑过的）回复，模拟客户反应
+  async function runSimulation() {
+    if (simLoading || !currentText.trim()) return;
+    setSimLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/simulations`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversationId, draftReply: currentText }),
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || "模拟失败");
+      setSimulation(json.data as SimulationResultData);
+      setSimOpen(true);
+    } catch (e) {
+      setError((e as Error).message || "模拟失败");
+    } finally {
+      setSimLoading(false);
     }
   }
 
@@ -308,6 +346,15 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
               <ThumbsUp className="size-3.5" />
               {savedStatus === "EFFECTIVE" ? "已标记效果好" : "标记沟通效果好"}
             </Button>
+            <Button variant="outline" onClick={runSimulation}
+              disabled={simLoading || !currentText.trim()} className="h-9 text-xs">
+              {simLoading ? (
+                <RefreshCw className="size-3.5 animate-spin" />
+              ) : (
+                <Users className="size-3.5" />
+              )}
+              {simLoading ? "模拟中…" : "模拟客户反应"}
+            </Button>
           </div>
           <p className="text-[11px]" style={{ color: "#94818D" }}>
             复制不等于发送，收藏不等于客户满意；请按实际情况确认，系统会据此学习你的风格。
@@ -323,6 +370,45 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                   <p className="text-[11px] leading-relaxed" style={{ color: "#8A6A3A" }}>{w.message}</p>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* 多轮客户沟通模拟结果（功能10） */}
+          {simulation && (
+            <div className="pt-3" style={{ borderTop: "1px solid #F5E0EC" }}>
+              <button onClick={() => setSimOpen(!simOpen)} className="flex w-full items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Users className="size-4" style={{ color: "#E65B93" }} />
+                  <span className="text-sm font-medium" style={{ color: "#302436" }}>
+                    客户反应模拟（{simulation.responses.length}）
+                  </span>
+                </div>
+                <ChevronDown className="size-4 transition-transform" style={{ color: "#817786", transform: simOpen ? "rotate(180deg)" : "rotate(0)" }} />
+              </button>
+              {simOpen && (
+                <div className="mt-3 space-y-3">
+                  <p className="text-[11px]" style={{ color: "#94818D" }}>{simulation.disclaimer}</p>
+                  {simulation.responses.map((r, i) => (
+                    <div key={i} className="rounded-[12px] p-3"
+                      style={{ backgroundColor: "#FFFAFC", border: "1px solid #F5E0EC" }}>
+                      <span className="rounded-full px-2.5 py-0.5 text-[10px]"
+                        style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}>
+                        {r.tendency}
+                      </span>
+                      <div className="mt-2 text-xs leading-relaxed" style={{ color: "#543C49" }}>
+                        <span className="font-medium" style={{ color: "#C82E72" }}>客户可能：</span>
+                        {r.customerReply}
+                      </div>
+                      {r.advisorTip && (
+                        <div className="mt-1.5 rounded-lg px-2.5 py-1.5 text-[11px] leading-relaxed"
+                          style={{ backgroundColor: "#FFF6F9", color: "#8A6A78" }}>
+                          接话建议：{r.advisorTip}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

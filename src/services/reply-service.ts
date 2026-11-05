@@ -30,6 +30,7 @@ import {
   formatSavedReplyContext,
 } from "@/services/saved-reply-service";
 import { applyCustomerFacts, ensureCustomer, type ApplyFactsResult } from "@/services/customer-memory-service";
+import { createTasksFromAnalysis } from "@/services/follow-up-service";
 import { prisma } from "@/lib/db";
 import { toPlainJson } from "@/lib/utils";
 
@@ -85,6 +86,7 @@ export interface GenerateReplyV2Result {
   quality: QualityCheckResult;
   knowledgeReferences: KnowledgeReference[];
   memory: ApplyFactsResult | null;
+  followUp: { createdCount: number; skippedCount: number } | null;
   timing: Record<string, number>;
   totalLatencyMs: number;
   model: string;
@@ -316,6 +318,17 @@ export async function generateReplyV2(
     );
   }
 
+  // 6. 落地跟进待办（分析输出的 followUpItems → FollowUpTask，同对话同标题去重）
+  let followUp: { createdCount: number; skippedCount: number } | null = null;
+  if (analysis.followUpItems.length > 0) {
+    followUp = await createTasksFromAnalysis(
+      input.userId,
+      activeCustomerId,
+      input.conversationId,
+      analysis.followUpItems
+    );
+  }
+
   const totalLatencyMs = Date.now() - totalStart;
   timing.total = totalLatencyMs;
 
@@ -328,6 +341,7 @@ export async function generateReplyV2(
     quality: qc,
     knowledgeReferences: references,
     memory,
+    followUp,
     timing,
     totalLatencyMs,
     model: genResult.model,

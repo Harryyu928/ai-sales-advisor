@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
         sourceType: true,
         sourceUrl: true,
         verifiedAt: true,
+        effectiveDate: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -59,14 +60,29 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "标题、分类和内容不能为空");
     }
 
+    // 允许的来源类型
+    const allowedSources = ["official", "manual", "upload", "internal"];
+    const safeSourceType = allowedSources.includes(sourceType) ? sourceType : "manual";
+
+    // 日期解析：仅接受 YYYY-MM-DD，非法返回 null，不编造
+    const parseDate = (v: unknown): Date | null => {
+      if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return null;
+      const d = new Date(`${v}T00:00:00Z`);
+      return Number.isNaN(d.getTime()) ? null : d;
+    };
+    const verifiedAt = parseDate(body.verifiedAt);
+    const effectiveDate = parseDate(body.effectiveDate);
+
     const doc = await prisma.knowledgeDocument.create({
       data: {
         title,
         category,
         content,
         examType: examType || null,
-        sourceType: sourceType || "manual",
+        sourceType: safeSourceType,
         sourceUrl: sourceUrl || null,
+        verifiedAt,
+        effectiveDate,
         tags: tags || undefined,
         reviewStatus: "APPROVED", // 手动新增默认审核通过
         uploadedById: user.id,

@@ -1,6 +1,8 @@
 "use client";
 
 // 应用外壳 V4.0：轻奢柔雾粉侧边栏 + 手机底部导航
+// V2.1：桌面端分组导航（9 项）；手机端 4 个常用入口 + 更多菜单
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -10,25 +12,76 @@ import {
   BookOpen,
   Settings,
   LogOut,
+  BellRing,
+  FolderOpen,
+  GraduationCap,
+  BarChart3,
+  LayoutGrid,
+  X,
+  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  badge?: "followup";
+}
+
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    title: "工作台",
+    items: [
+      { href: "/", label: "AI 回复", icon: MessageSquareText },
+      { href: "/follow-ups", label: "跟进提醒", icon: BellRing, badge: "followup" },
+    ],
+  },
+  {
+    title: "客户与资料",
+    items: [
+      { href: "/customers", label: "客户记录", icon: Users },
+      { href: "/materials", label: "销售资料", icon: FolderOpen },
+      { href: "/knowledge", label: "知识库", icon: BookOpen },
+    ],
+  },
+  {
+    title: "成长与分析",
+    items: [
+      { href: "/style", label: "我的风格", icon: Sparkles },
+      { href: "/study-plans", label: "备考路径", icon: GraduationCap },
+      { href: "/effect-analysis", label: "效果分析", icon: BarChart3 },
+    ],
+  },
+];
+
+const SETTINGS_ITEM: NavItem = { href: "/settings", label: "设置", icon: Settings };
+
+const ALL_ITEMS: NavItem[] = [...NAV_GROUPS.flatMap((g) => g.items), SETTINGS_ITEM];
+
+// 手机底部固定 4 个常用入口，第 5 个为"更多"
+const MOBILE_PRIMARY: NavItem[] = [
   { href: "/", label: "AI 回复", icon: MessageSquareText },
-  { href: "/customers", label: "客户记录", icon: Users },
-  { href: "/style", label: "我的风格", icon: Sparkles },
-  { href: "/knowledge", label: "知识库", icon: BookOpen },
-  { href: "/settings", label: "设置", icon: Settings },
+  { href: "/follow-ups", label: "跟进", icon: BellRing, badge: "followup" },
+  { href: "/customers", label: "客户", icon: Users },
+  { href: "/materials", label: "资料", icon: FolderOpen },
 ];
 
 interface AppShellProps {
   user: { name: string; email: string; role: string };
   children: React.ReactNode;
+  followUpCount?: number;
 }
 
-export function AppShell({ user, children }: AppShellProps) {
+export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   async function handleLogout() {
     try {
@@ -36,6 +89,23 @@ export function AppShell({ user, children }: AppShellProps) {
     } catch {}
     router.push("/");
     router.refresh();
+  }
+
+  function renderNavLink(item: NavItem, active: boolean) {
+    return (
+      <>
+        <item.icon className="size-[18px]" />
+        <span className="flex-1">{item.label}</span>
+        {item.badge === "followup" && followUpCount > 0 && (
+          <span
+            className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold"
+            style={{ backgroundColor: "#E65B93", color: "#FFFFFF" }}
+          >
+            {followUpCount > 99 ? "99+" : followUpCount}
+          </span>
+        )}
+      </>
+    );
   }
 
   return (
@@ -63,37 +133,64 @@ export function AppShell({ user, children }: AppShellProps) {
           </div>
         </div>
 
-        {/* 导航 */}
-        <nav className="flex-1 space-y-1 px-4 py-4">
-          {NAV_ITEMS.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-[12px] px-3.5 py-2.5 text-sm transition-all duration-200"
-                )}
-                style={
-                  active
-                    ? {
-                        background: "linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%)",
-                        color: "#C82E72",
-                        fontWeight: 500,
-                      }
-                    : { color: "#817786" }
-                }
+        {/* 分组导航 */}
+        <nav className="flex-1 overflow-y-auto px-4 py-2">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.title} className="mb-2">
+              <div
+                className="px-3.5 pb-1 pt-2 text-[10px] font-semibold tracking-wider"
+                style={{ color: "#B4A8B8" }}
               >
-                <item.icon className="size-[18px]" />
-                {item.label}
-              </Link>
-            );
-          })}
+                {group.title}
+              </div>
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const active = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center gap-3 rounded-[12px] px-3.5 py-2.5 text-sm transition-all duration-200"
+                      style={
+                        active
+                          ? {
+                              background: "linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%)",
+                              color: "#C82E72",
+                              fontWeight: 500,
+                            }
+                          : { color: "#817786" }
+                      }
+                    >
+                      {renderNavLink(item, active)}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+
+          {/* 设置 */}
+          <div className="space-y-1">
+            <Link
+              href={SETTINGS_ITEM.href}
+              className="flex items-center gap-3 rounded-[12px] px-3.5 py-2.5 text-sm transition-all duration-200"
+              style={
+                pathname === SETTINGS_ITEM.href
+                  ? {
+                      background: "linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%)",
+                      color: "#C82E72",
+                      fontWeight: 500,
+                    }
+                  : { color: "#817786" }
+              }
+            >
+              {renderNavLink(SETTINGS_ITEM, pathname === SETTINGS_ITEM.href)}
+            </Link>
+          </div>
         </nav>
 
         {/* 底部波浪装饰 + 用户区 */}
         <div className="relative">
-          {/* 浅粉波浪装饰 */}
           <svg
             viewBox="0 0 248 40"
             className="w-full opacity-40"
@@ -170,7 +267,7 @@ export function AppShell({ user, children }: AppShellProps) {
         </div>
       </main>
 
-      {/* 手机端底部固定导航 */}
+      {/* 手机端底部固定导航：4 常用 + 更多 */}
       <nav
         className="fixed inset-x-0 bottom-0 z-30 border-t md:hidden"
         style={{
@@ -180,13 +277,13 @@ export function AppShell({ user, children }: AppShellProps) {
         }}
       >
         <div className="grid grid-cols-5">
-          {NAV_ITEMS.map((item) => {
+          {MOBILE_PRIMARY.map((item) => {
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex flex-col items-center gap-1 py-2.5 text-[11px]"
+                className="relative flex flex-col items-center gap-1 py-2.5 text-[11px]"
                 style={{
                   color: active ? "#E65B93" : "#94818D",
                   fontWeight: active ? 500 : 400,
@@ -194,11 +291,80 @@ export function AppShell({ user, children }: AppShellProps) {
               >
                 <item.icon className="size-5" />
                 {item.label}
+                {item.badge === "followup" && followUpCount > 0 && (
+                  <span
+                    className="absolute right-2.5 top-1.5 inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-semibold"
+                    style={{ backgroundColor: "#E65B93", color: "#FFFFFF" }}
+                  >
+                    {followUpCount > 99 ? "99+" : followUpCount}
+                  </span>
+                )}
               </Link>
             );
           })}
+          <button
+            onClick={() => setMoreOpen(true)}
+            className="flex flex-col items-center gap-1 py-2.5 text-[11px]"
+            style={{ color: "#94818D" }}
+          >
+            <LayoutGrid className="size-5" />
+            更多
+          </button>
         </div>
       </nav>
+
+      {/* 手机端更多菜单（底部滑入面板） */}
+      {moreOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setMoreOpen(false)}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 rounded-t-[24px] px-5 pb-8 pt-4"
+            style={{
+              backgroundColor: "#FFFAFC",
+              paddingBottom: "calc(env(safe-area-inset-bottom) + 24px)",
+            }}
+          >
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full" style={{ backgroundColor: "#E8DCE4" }} />
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-semibold" style={{ color: "#302436" }}>
+                全部功能
+              </span>
+              <button
+                onClick={() => setMoreOpen(false)}
+                aria-label="关闭"
+                className="flex size-8 items-center justify-center rounded-full"
+                style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {ALL_ITEMS.map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMoreOpen(false)}
+                    className="flex flex-col items-center gap-2 rounded-[16px] px-2 py-4"
+                    style={{
+                      backgroundColor: active ? "#FCE7F0" : "#FFFFFF",
+                      border: "1px solid #F5E0EC",
+                      color: active ? "#C82E72" : "#543C49",
+                    }}
+                  >
+                    <item.icon className="size-5" />
+                    <span className="text-[11px]">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

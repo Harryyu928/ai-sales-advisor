@@ -21,12 +21,22 @@ const CATEGORIES = [
   { value: "COURSE", label: "课程产品" },
 ];
 
+const SOURCE_TYPES = [
+  { value: "official", label: "官方来源" },
+  { value: "manual", label: "内部整理" },
+  { value: "upload", label: "上传资料" },
+  { value: "internal", label: "内部文档" },
+];
+
 export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("IELTS");
   const [content, setContent] = useState("");
   const [examType, setExamType] = useState("");
+  const [sourceType, setSourceType] = useState("manual");
   const [sourceUrl, setSourceUrl] = useState("");
+  const [verifiedAt, setVerifiedAt] = useState("");
+  const [effectiveDate, setEffectiveDate] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +56,10 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
           category,
           content: content.trim(),
           examType: examType.trim() || null,
+          sourceType,
           sourceUrl: sourceUrl.trim() || null,
+          verifiedAt: verifiedAt || null,
+          effectiveDate: effectiveDate || null,
         }),
       });
       const json = await res.json();
@@ -152,21 +165,64 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
             />
           </div>
 
-          {/* 官方来源 */}
-          <div>
-            <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
-              官方来源链接（选填）
-            </label>
-            <input
-              type="text"
-              value={sourceUrl}
-              onChange={(e) => setSourceUrl(e.target.value)}
-              placeholder="例如：https://www.ielts.org"
-              className="w-full rounded-[12px] px-4 py-2.5 text-sm outline-none"
-              style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC", color: "#302436" }}
-            />
-            <p className="mt-1.5 text-xs" style={{ color: "#94818D" }}>
-              考试资讯类知识请填写官方网站链接，不引用第三方来源
+          {/* 来源信息 */}
+          <div className="space-y-3 rounded-[14px] p-3.5" style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC" }}>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+                  来源类型
+                </label>
+                <select
+                  value={sourceType}
+                  onChange={(e) => setSourceType(e.target.value)}
+                  className="w-full rounded-[12px] px-3 py-2.5 text-sm outline-none"
+                  style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+                >
+                  {SOURCE_TYPES.map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+                  核实日期（选填）
+                </label>
+                <input
+                  type="date"
+                  value={verifiedAt}
+                  onChange={(e) => setVerifiedAt(e.target.value)}
+                  className="w-full rounded-[12px] px-3 py-2.5 text-sm outline-none"
+                  style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+                />
+              </div>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+                来源链接（选填）
+              </label>
+              <input
+                type="text"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                placeholder="例如：https://www.ielts.org"
+                className="w-full rounded-[12px] px-4 py-2.5 text-sm outline-none"
+                style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+                生效日期（选填）
+              </label>
+              <input
+                type="date"
+                value={effectiveDate}
+                onChange={(e) => setEffectiveDate(e.target.value)}
+                className="w-full rounded-[12px] px-3 py-2.5 text-sm outline-none"
+                style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+              />
+            </div>
+            <p className="text-xs" style={{ color: "#94818D" }}>
+              考试资讯类知识请填写官方来源与链接，不引用第三方来源；生效日期用于判断内容是否可能过期。
             </p>
           </div>
 
