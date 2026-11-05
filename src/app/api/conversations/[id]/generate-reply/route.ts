@@ -7,6 +7,10 @@ import type { StylePreset } from "@/lib/reply-prompts";
 
 const VALID_STYLES: StylePreset[] = ["brief", "professional", "natural", "gentle"];
 
+// Vercel serverless：允许 AI 长推理（海外节点→国内 ARK 连接较慢）
+export const maxDuration = 60;
+export const runtime = "nodejs";
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
