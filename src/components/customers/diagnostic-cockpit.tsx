@@ -99,7 +99,11 @@ function EvidenceQuote({ text, idx }: { text: string; idx?: number }) {
 function Collapsible({ title, icon, children, defaultOpen = false }: {
   title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  // 手机端（<768px）默认折叠，减少长滚动；桌面端按传入的 defaultOpen
+  const [open, setOpen] = useState(() => {
+    if (typeof window === "undefined") return defaultOpen;
+    return window.innerWidth >= 768 ? defaultOpen : false;
+  });
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
       <button onClick={() => setOpen(!open)}
