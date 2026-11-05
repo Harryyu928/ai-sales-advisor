@@ -170,20 +170,20 @@ export function UploadZone({ onUploaded }: UploadZoneProps) {
         }}
         className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition-colors`}
         style={{
-          backgroundColor: dragging ? "#FCE7F0" : "#FFFAFC",
-          borderColor: dragging ? "#E65B93" : "#F0C8DC",
+          backgroundColor: dragging ? "var(--primary-light)" : "#FFFAFC",
+          borderColor: dragging ? "var(--primary)" : "var(--gold)",
         }}
       >
         <div
           className="flex size-12 items-center justify-center rounded-full"
-          style={{ backgroundColor: "#FCE7F0", color: "#E65B93" }}
+          style={{ backgroundColor: "var(--primary-light)", color: "var(--primary)" }}
         >
           <ImagePlus className="size-6" />
         </div>
-        <div className="text-sm font-medium" style={{ color: "#302436" }}>
+        <div className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
           上传微信聊天截图
         </div>
-        <div className="text-xs" style={{ color: "#817786" }}>
+        <div className="text-xs" style={{ color: "var(--muted-foreground)" }}>
           支持多张截图、拖拽或粘贴上传（Ctrl+V / Command+V）
         </div>
         <input

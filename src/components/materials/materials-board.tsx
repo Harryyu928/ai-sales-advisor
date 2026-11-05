@@ -224,9 +224,9 @@ export function MaterialsBoard() {
               onClick={() => setTypeFilter(c.v)}
               className="rounded-full px-3 py-1.5 text-xs font-medium transition-all"
               style={{
-                backgroundColor: active ? "#E65B93" : "#FFFFFF",
-                color: active ? "#FFFFFF" : "#817786",
-                border: "1px solid " + (active ? "#E65B93" : "#F0E0E8"),
+                backgroundColor: active ? "var(--primary)" : "#FFFFFF",
+                color: active ? "#FFFFFF" : "var(--muted-foreground)",
+                border: "1px solid " + (active ? "var(--primary)" : "#F0E0E8"),
               }}
             >
               {c.l}
@@ -243,9 +243,9 @@ export function MaterialsBoard() {
 
       {/* 新建/编辑表单 */}
       {formOpen && (
-        <div className="space-y-3 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+        <div className="space-y-3 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium" style={{ color: "#302436" }}>
+            <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
               {editingId ? "编辑资料" : "新建资料"}
             </span>
             <button onClick={() => setFormOpen(false)} aria-label="关闭" style={{ color: "#94818D" }}>
@@ -262,7 +262,7 @@ export function MaterialsBoard() {
               value={form.materialType}
               onChange={(e) => setForm((p) => ({ ...p, materialType: e.target.value }))}
               className="h-8 rounded-lg border px-2.5 text-sm outline-none"
-              style={{ borderColor: "#E0D0D8", backgroundColor: "transparent", color: "#302436" }}
+              style={{ borderColor: "#E0D0D8", backgroundColor: "transparent", color: "var(--foreground)" }}
             >
               {TYPE_OPTIONS.map(([v, l]) => (
                 <option key={v} value={v}>{l}</option>
@@ -287,7 +287,7 @@ export function MaterialsBoard() {
               onChange={(e) => setForm((p) => ({ ...p, tags: e.target.value }))}
             />
           </div>
-          <label className="flex items-center gap-2 text-xs" style={{ color: "#817786" }}>
+          <label className="flex items-center gap-2 text-xs" style={{ color: "var(--muted-foreground)" }}>
             <input
               type="checkbox"
               checked={form.favorite}
@@ -310,7 +310,7 @@ export function MaterialsBoard() {
           <Loader2 className="size-4 animate-spin" /> 加载中…
         </div>
       ) : materials.length === 0 ? (
-        <div className="rounded-[18px] py-14 text-center" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+        <div className="rounded-[18px] py-14 text-center" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
           <FolderOpen className="mx-auto size-7" style={{ color: "#D8C8D2" }} />
           <div className="mt-3 text-sm" style={{ color: "#94818D" }}>还没有资料，点击「新建资料」开始</div>
         </div>
@@ -320,18 +320,18 @@ export function MaterialsBoard() {
             <div
               key={m.id}
               className="flex flex-col rounded-[18px] p-5"
-              style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}
+              style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}
             >
               {/* 头部 */}
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="text-sm font-semibold" style={{ color: "#302436" }}>
+                  <div className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
                     {m.title}
                   </div>
                   <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                     <span
                       className="rounded-full px-2.5 py-0.5 text-[10px]"
-                      style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+                      style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}
                     >
                       {TYPE_LABEL[m.materialType] ?? m.materialType}
                     </span>
@@ -345,9 +345,9 @@ export function MaterialsBoard() {
                 <button
                   onClick={() => toggleStar(m)}
                   aria-label="收藏"
-                  style={{ color: m.favorite ? "#E65B93" : "#D0C4CC" }}
+                  style={{ color: m.favorite ? "var(--primary)" : "#D0C4CC" }}
                 >
-                  <Star className="size-4" fill={m.favorite ? "#E65B93" : "none"} />
+                  <Star className="size-4" fill={m.favorite ? "var(--primary)" : "none"} />
                 </button>
               </div>
 

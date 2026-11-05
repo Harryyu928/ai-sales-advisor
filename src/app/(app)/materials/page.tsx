@@ -11,15 +11,15 @@ export default function MaterialsPage() {
       <div className="flex items-center gap-3">
         <div
           className="flex size-10 items-center justify-center rounded-[12px]"
-          style={{ backgroundColor: "#FCE7F0" }}
+          style={{ backgroundColor: "var(--primary-light)" }}
         >
-          <FolderOpen className="size-5" style={{ color: "#E65B93" }} />
+          <FolderOpen className="size-5" style={{ color: "var(--primary)" }} />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold md:text-[28px]" style={{ color: "#302436" }}>
+          <h1 className="text-2xl font-semibold md:text-[28px]" style={{ color: "var(--foreground)" }}>
             销售资料
           </h1>
-          <p className="mt-0.5 text-sm" style={{ color: "#817786" }}>
+          <p className="mt-0.5 text-sm" style={{ color: "var(--muted-foreground)" }}>
             集中管理常用话术与资料，一键复制，沟通时快速调用
           </p>
         </div>

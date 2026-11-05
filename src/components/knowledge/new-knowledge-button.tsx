@@ -13,7 +13,7 @@ export function NewKnowledgeButton({ onSaved }: { onSaved?: () => void }) {
       <button
         onClick={() => setShowForm(true)}
         className="flex h-12 items-center justify-center gap-2 rounded-[16px] px-5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90"
-        style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}
+        style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}
       >
         <Plus className="size-4" />
         新建知识

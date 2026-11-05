@@ -45,13 +45,13 @@ function StatCard({
   return (
     <div
       className="rounded-[16px] p-4"
-      style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}
+      style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}
     >
       <div className="flex items-center gap-1.5">
-        <Icon className="size-3.5" style={{ color: "#E65B93" }} />
+        <Icon className="size-3.5" style={{ color: "var(--primary)" }} />
         <span className="text-[11px]" style={{ color: "#94818D" }}>{label}</span>
       </div>
-      <div className="mt-2 text-xl font-semibold" style={{ color: "#302436" }}>
+      <div className="mt-2 text-xl font-semibold" style={{ color: "var(--foreground)" }}>
         {value}
         {suffix && <span className="ml-0.5 text-sm" style={{ color: "#94818D" }}>{suffix}</span>}
       </div>
@@ -72,16 +72,16 @@ function BarList({ items, empty }: { items: NameCount[]; empty: string }) {
           <div className="w-24 shrink-0 truncate text-[11px]" style={{ color: "#5A4A54" }} title={item.name}>
             {item.name}
           </div>
-          <div className="h-2.5 flex-1 overflow-hidden rounded-full" style={{ backgroundColor: "#FCE7F0" }}>
+          <div className="h-2.5 flex-1 overflow-hidden rounded-full" style={{ backgroundColor: "var(--primary-light)" }}>
             <div
               className="h-full rounded-full"
               style={{
                 width: `${(item.count / max) * 100}%`,
-                background: "linear-gradient(90deg, #E65B93 0%, #C82E72 100%)",
+                background: "linear-gradient(90deg, var(--primary) 0%, var(--primary-deep) 100%)",
               }}
             />
           </div>
-          <div className="w-6 shrink-0 text-right text-[11px] font-medium" style={{ color: "#302436" }}>
+          <div className="w-6 shrink-0 text-right text-[11px] font-medium" style={{ color: "var(--foreground)" }}>
             {item.count}
           </div>
         </div>
@@ -92,7 +92,7 @@ function BarList({ items, empty }: { items: NameCount[]; empty: string }) {
 
 function InsightList({ title, items, tone }: { title: string; items: string[]; tone: "good" | "warn" | "action" }) {
   const color =
-    tone === "good" ? "#2D9B7E" : tone === "warn" ? "#C47A20" : "#C82E72";
+    tone === "good" ? "#2D9B7E" : tone === "warn" ? "#C47A20" : "var(--primary-deep)";
   return (
     <div>
       <div className="mb-1.5 text-xs font-medium" style={{ color: "#94818D" }}>{title}</div>
@@ -139,8 +139,8 @@ export function EffectAnalysisBoard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <Loader2 className="size-5 animate-spin mr-2" style={{ color: "#E65B93" }} />
-        <span className="text-sm" style={{ color: "#817786" }}>正在统计分析…</span>
+        <Loader2 className="size-5 animate-spin mr-2" style={{ color: "var(--primary)" }} />
+        <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>正在统计分析…</span>
       </div>
     );
   }
@@ -176,10 +176,10 @@ export function EffectAnalysisBoard() {
       </div>
 
       {/* 近 14 天趋势 */}
-      <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+      <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
         <div className="mb-4 flex items-center gap-2">
-          <TrendingUp className="size-4" style={{ color: "#E65B93" }} />
-          <span className="text-sm font-medium" style={{ color: "#302436" }}>近 14 天生成趋势</span>
+          <TrendingUp className="size-4" style={{ color: "var(--primary)" }} />
+          <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>近 14 天生成趋势</span>
         </div>
         <div className="flex items-end justify-between gap-1" style={{ height: 120 }}>
           {metrics.dailyTrend.map((d, i) => (
@@ -190,7 +190,7 @@ export function EffectAnalysisBoard() {
                 style={{
                   height: `${(d.count / trendMax) * 80}%`,
                   minHeight: d.count > 0 ? 4 : 2,
-                  background: "linear-gradient(180deg, #E65B93 0%, #F0A8C8 100%)",
+                  background: "linear-gradient(180deg, var(--primary) 0%, #F0A8C8 100%)",
                 }}
                 title={`${d.name}: ${d.count}`}
               />
@@ -202,27 +202,27 @@ export function EffectAnalysisBoard() {
 
       {/* 分布 */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
           <div className="mb-3 flex items-center gap-2">
-            <AlertTriangle className="size-4" style={{ color: "#E65B93" }} />
-            <span className="text-sm font-medium" style={{ color: "#302436" }}>质检问题分布</span>
+            <AlertTriangle className="size-4" style={{ color: "var(--primary)" }} />
+            <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>质检问题分布</span>
           </div>
           <BarList items={metrics.qualityIssueCounts} empty="暂无质检问题" />
         </div>
-        <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
           <div className="mb-3 flex items-center gap-2">
-            <ListChecks className="size-4" style={{ color: "#E65B93" }} />
-            <span className="text-sm font-medium" style={{ color: "#302436" }}>咨询阶段分布</span>
+            <ListChecks className="size-4" style={{ color: "var(--primary)" }} />
+            <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>咨询阶段分布</span>
           </div>
           <BarList items={metrics.stageCounts} empty="暂无阶段数据" />
         </div>
       </div>
 
       {/* 模型洞察 */}
-      <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+      <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
         <div className="mb-4 flex items-center gap-2">
-          <Lightbulb className="size-4" style={{ color: "#E65B93" }} />
-          <span className="text-sm font-medium" style={{ color: "#302436" }}>智能改进建议</span>
+          <Lightbulb className="size-4" style={{ color: "var(--primary)" }} />
+          <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>智能改进建议</span>
         </div>
         {insight ? (
           <div className="space-y-4">

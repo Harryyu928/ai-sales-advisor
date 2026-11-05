@@ -51,7 +51,7 @@ export default async function CustomerDetailPage({
       <Link
         href="/customers"
         className="inline-flex items-center gap-1.5 text-sm"
-        style={{ color: "#817786" }}
+        style={{ color: "var(--muted-foreground)" }}
       >
         <ArrowLeft className="size-4" />
         返回客户列表
@@ -60,24 +60,24 @@ export default async function CustomerDetailPage({
       {/* 客户头部卡片 */}
       <div
         className="rounded-[20px] bg-white p-6"
-        style={{ border: "1px solid #F5E0EC" }}
+        style={{ border: "1px solid var(--border)" }}
       >
         <div className="flex items-start gap-4">
           <div
             className="flex size-14 shrink-0 items-center justify-center rounded-full text-lg font-semibold"
-            style={{ background: "linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%)", color: "#E65B93" }}
+            style={{ background: "linear-gradient(135deg, var(--primary-light) 0%, var(--primary-soft) 100%)", color: "var(--primary)" }}
           >
             {customer.code?.slice(0, 1) || "客"}
           </div>
           <div className="flex-1">
-            <h1 className="text-xl font-semibold" style={{ color: "#302436" }}>
+            <h1 className="text-xl font-semibold" style={{ color: "var(--foreground)" }}>
               {customer.code}
             </h1>
-            <p className="mt-1 text-sm" style={{ color: "#817786" }}>
+            <p className="mt-1 text-sm" style={{ color: "var(--muted-foreground)" }}>
               最近沟通：{customer.lastContactAt?.toLocaleDateString("zh-CN") ?? "未记录"}
             </p>
             {customer.summary && (
-              <p className="mt-3 text-sm leading-relaxed" style={{ color: "#302436" }}>
+              <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--foreground)" }}>
                 {customer.summary}
               </p>
             )}
@@ -91,10 +91,10 @@ export default async function CustomerDetailPage({
       {/* 客户信息卡片 */}
       <div
         className="rounded-[20px] bg-white p-6"
-        style={{ border: "1px solid #F5E0EC" }}
+        style={{ border: "1px solid var(--border)" }}
       >
-        <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold" style={{ color: "#302436" }}>
-          <Target className="size-4" style={{ color: "#E65B93" }} />
+        <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+          <Target className="size-4" style={{ color: "var(--primary)" }} />
           客户关键信息
         </h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -105,7 +105,7 @@ export default async function CustomerDetailPage({
               style={{ backgroundColor: "#FFFAFC" }}
             >
               <div className="text-xs" style={{ color: "#94818D" }}>{label}</div>
-              <div className="mt-1 text-sm font-medium" style={{ color: "#302436" }}>
+              <div className="mt-1 text-sm font-medium" style={{ color: "var(--foreground)" }}>
                 {value || "—"}
               </div>
             </div>
@@ -116,10 +116,10 @@ export default async function CustomerDetailPage({
       {/* 沟通记录 */}
       <div
         className="rounded-[20px] bg-white p-6"
-        style={{ border: "1px solid #F5E0EC" }}
+        style={{ border: "1px solid var(--border)" }}
       >
-        <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold" style={{ color: "#302436" }}>
-          <MessageCircle className="size-4" style={{ color: "#E65B93" }} />
+        <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+          <MessageCircle className="size-4" style={{ color: "var(--primary)" }} />
           沟通记录（{customer.conversations.length}）
         </h2>
         {customer.conversations.length === 0 ? (
@@ -144,11 +144,11 @@ export default async function CustomerDetailPage({
                     <div
                       key={i}
                       className="text-xs leading-relaxed"
-                      style={{ color: "#302436" }}
+                      style={{ color: "var(--foreground)" }}
                     >
                       <span
                         className="mr-1.5 font-medium"
-                        style={{ color: msg.senderRole === "CUSTOMER" ? "#E65B93" : "#817786" }}
+                        style={{ color: msg.senderRole === "CUSTOMER" ? "var(--primary)" : "var(--muted-foreground)" }}
                       >
                         {msg.senderRole === "CUSTOMER" ? "客户" : "顾问"}：
                       </span>

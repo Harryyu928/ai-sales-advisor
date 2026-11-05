@@ -158,7 +158,7 @@ export function StudyPlanBoard() {
         {plan.goal && (
           <div>
             <div className="text-xs font-medium" style={{ color: "#94818D" }}>备考目标</div>
-            <div className="mt-1 text-sm font-medium" style={{ color: "#302436" }}>{plan.goal}</div>
+            <div className="mt-1 text-sm font-medium" style={{ color: "var(--foreground)" }}>{plan.goal}</div>
           </div>
         )}
 
@@ -174,7 +174,7 @@ export function StudyPlanBoard() {
             <div className="mb-1.5 text-xs font-medium" style={{ color: "#94818D" }}>待补充信息</div>
             <div className="flex flex-wrap gap-1.5">
               {plan.missingInfo.map((m, i) => (
-                <span key={i} className="rounded-full px-2.5 py-1 text-[11px]" style={{ backgroundColor: "#FFF1F6", color: "#C82E72" }}>
+                <span key={i} className="rounded-full px-2.5 py-1 text-[11px]" style={{ backgroundColor: "var(--primary-soft)", color: "var(--primary-deep)" }}>
                   {m}
                 </span>
               ))}
@@ -189,15 +189,15 @@ export function StudyPlanBoard() {
             </div>
             <div className="space-y-2.5">
               {plan.phases.map((p, i) => (
-                <div key={i} className="flex gap-3 rounded-[12px] p-3" style={{ backgroundColor: "#FFFAFC", border: "1px solid #F5E0EC" }}>
+                <div key={i} className="flex gap-3 rounded-[12px] p-3" style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--border)" }}>
                   <div
                     className="flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold"
-                    style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+                    style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}
                   >
                     {i + 1}
                   </div>
                   <div className="min-w-0">
-                    <div className="text-xs font-semibold" style={{ color: "#302436" }}>{p.name}</div>
+                    <div className="text-xs font-semibold" style={{ color: "var(--foreground)" }}>{p.name}</div>
                     <div className="mt-0.5 text-[11px]" style={{ color: "#5A4A54" }}>{p.focus}</div>
                     {p.milestone && (
                       <div className="mt-1 text-[11px]" style={{ color: "#C47A20" }}>评估节点：{p.milestone}</div>
@@ -216,7 +216,7 @@ export function StudyPlanBoard() {
             </div>
             <ul className="space-y-1">
               {plan.risks.map((r, i) => (
-                <li key={i} className="text-[11px]" style={{ color: "#817786" }}>· {r}</li>
+                <li key={i} className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>· {r}</li>
               ))}
             </ul>
           </div>
@@ -255,8 +255,8 @@ export function StudyPlanBoard() {
   return (
     <div className="space-y-5">
       {/* 生成表单 */}
-      <div className="space-y-4 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
-        <div className="text-sm font-medium" style={{ color: "#302436" }}>生成备考路径</div>
+      <div className="space-y-4 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
+        <div className="text-sm font-medium" style={{ color: "var(--foreground)" }}>生成备考路径</div>
 
         {/* 客户选择 */}
         <div>
@@ -265,7 +265,7 @@ export function StudyPlanBoard() {
             value={customerId}
             onChange={(e) => setCustomerId(e.target.value)}
             className="h-8 w-full rounded-lg border px-2.5 text-sm outline-none"
-            style={{ borderColor: "#E0D0D8", backgroundColor: "transparent", color: "#302436" }}
+            style={{ borderColor: "#E0D0D8", backgroundColor: "transparent", color: "var(--foreground)" }}
           >
             <option value="">不指定客户，手动填写信息</option>
             {customers.map((c) => (
@@ -307,21 +307,21 @@ export function StudyPlanBoard() {
 
       {/* 最新结果 */}
       {result && (
-        <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
-          <div className="mb-4 flex items-center gap-2 text-sm font-semibold" style={{ color: "#302436" }}>
-            <GraduationCap className="size-4" style={{ color: "#E65B93" }} /> 生成结果
+        <div className="rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
+          <div className="mb-4 flex items-center gap-2 text-sm font-semibold" style={{ color: "var(--foreground)" }}>
+            <GraduationCap className="size-4" style={{ color: "var(--primary)" }} /> 生成结果
           </div>
           {renderPlan(result.plan)}
         </div>
       )}
 
       {/* 历史方案 */}
-      <div className="rounded-[18px]" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+      <div className="rounded-[18px]" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
         <button
           onClick={() => setShowHistory((v) => !v)}
           className="flex w-full items-center justify-between px-5 py-4 text-left"
         >
-          <span className="text-sm font-medium" style={{ color: "#302436" }}>
+          <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
             历史方案（{history.length}）
           </span>
           <ChevronDown className={`size-4 transition-transform ${showHistory ? "rotate-180" : ""}`} style={{ color: "#94818D" }} />
@@ -332,7 +332,7 @@ export function StudyPlanBoard() {
               <div className="py-6 text-center text-xs" style={{ color: "#94818D" }}>暂无历史方案</div>
             ) : (
               history.map((h) => (
-                <div key={h.id} className="rounded-[14px] p-4" style={{ backgroundColor: "#FFFAFC", border: "1px solid #F5E0EC" }}>
+                <div key={h.id} className="rounded-[14px] p-4" style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--border)" }}>
                   <div className="mb-3 flex items-center justify-between">
                     <div className="text-[11px]" style={{ color: "#94818D" }}>
                       {h.customer ? h.customer.code + " · " : ""}

@@ -60,7 +60,7 @@ export function KnowledgeSearch() {
     <div className="relative">
       <div
         className="relative flex-1 rounded-[16px] bg-white"
-        style={{ border: "1px solid #F0C8DC", boxShadow: "0 2px 12px rgba(230,91,147,0.06)" }}
+        style={{ border: "1px solid var(--gold)", boxShadow: "0 2px 12px rgba(230,91,147,0.06)" }}
       >
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4.5" style={{ color: "#94818D" }} />
         <input
@@ -72,7 +72,7 @@ export function KnowledgeSearch() {
           }}
           placeholder="搜索知识，例如：雅思报名、托福考试形式、语言班要求……"
           className="w-full rounded-[16px] py-3.5 pl-11 pr-10 text-sm outline-none"
-          style={{ backgroundColor: "transparent", color: "#302436" }}
+          style={{ backgroundColor: "transparent", color: "var(--foreground)" }}
         />
         {query && (
           <button
@@ -89,16 +89,16 @@ export function KnowledgeSearch() {
       {searched && query.trim() && (
         <div
           className="absolute top-full left-0 right-0 mt-2 rounded-[16px] bg-white z-50 overflow-hidden"
-          style={{ border: "1px solid #F0C8DC", boxShadow: "0 8px 24px rgba(230,91,147,0.12)" }}
+          style={{ border: "1px solid var(--gold)", boxShadow: "0 8px 24px rgba(230,91,147,0.12)" }}
         >
           {searching ? (
-            <div className="px-4 py-6 text-center text-sm" style={{ color: "#817786" }}>
+            <div className="px-4 py-6 text-center text-sm" style={{ color: "var(--muted-foreground)" }}>
               搜索中…
             </div>
           ) : results.length === 0 ? (
             <div className="px-4 py-6 text-center">
-              <FileText className="size-6 mx-auto mb-2" style={{ color: "#F0C8DC" }} />
-              <p className="text-sm" style={{ color: "#817786" }}>
+              <FileText className="size-6 mx-auto mb-2" style={{ color: "var(--gold)" }} />
+              <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
                 没有找到相关知识
               </p>
             </div>
@@ -107,15 +107,15 @@ export function KnowledgeSearch() {
               {results.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-[#FFF1F6] transition-colors cursor-pointer"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-[var(--primary-soft)] transition-colors cursor-pointer"
                 >
                   <span
                     className="inline-block rounded-full px-2 py-0.5 text-xs font-medium shrink-0"
-                    style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+                    style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}
                   >
                     {CATEGORY_LABELS[item.category] || item.category}
                   </span>
-                  <span className="flex-1 truncate text-sm" style={{ color: "#302436" }}>
+                  <span className="flex-1 truncate text-sm" style={{ color: "var(--foreground)" }}>
                     {item.title}
                   </span>
                 </div>

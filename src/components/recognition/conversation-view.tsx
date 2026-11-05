@@ -63,14 +63,14 @@ const ROLE_LABEL: Record<MessageRole, string> = {
 };
 
 function avatarBg(role: MessageRole) {
-  if (role === "ADVISOR") return "#FCE7F0";
-  if (role === "CUSTOMER") return "#FFF1F6";
-  return "#F5E0EC";
+  if (role === "ADVISOR") return "var(--primary-light)";
+  if (role === "CUSTOMER") return "var(--primary-soft)";
+  return "var(--border)";
 }
 function avatarColor(role: MessageRole) {
-  if (role === "ADVISOR") return "#E65B93";
-  if (role === "CUSTOMER") return "#C82E72";
-  return "#817786";
+  if (role === "ADVISOR") return "var(--primary)";
+  if (role === "CUSTOMER") return "var(--primary-deep)";
+  return "var(--muted-foreground)";
 }
 
 function avatarIcon(role: MessageRole) {
@@ -149,19 +149,19 @@ function MessageRow({ message, onSaved, onDeleted }: MessageRowProps) {
     return (
       <div
         className="rounded-2xl p-4"
-        style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}
+        style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}
       >
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="text-xs" style={{ color: "#817786" }}>发言方：</span>
+          <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>发言方：</span>
           {(["CUSTOMER", "ADVISOR", "UNKNOWN"] as MessageRole[]).map((r) => (
             <button
               key={r}
               onClick={() => setDraft((d) => ({ ...d, role: r }))}
               className="rounded-full px-3 py-1 text-xs font-medium transition-colors"
               style={{
-                backgroundColor: draft.role === r ? "#FCE7F0" : "#FFF1F6",
-                color: draft.role === r ? "#C82E72" : "#817786",
-                border: draft.role === r ? "1px solid #F0C8DC" : "1px solid #F5E0EC",
+                backgroundColor: draft.role === r ? "var(--primary-light)" : "var(--primary-soft)",
+                color: draft.role === r ? "var(--primary-deep)" : "var(--muted-foreground)",
+                border: draft.role === r ? "1px solid var(--gold)" : "1px solid var(--border)",
               }}
             >
               {ROLE_LABEL[r]}
@@ -212,10 +212,10 @@ function MessageRow({ message, onSaved, onDeleted }: MessageRowProps) {
         <div
           className="relative rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed"
           style={{
-            backgroundColor: isRight ? "#FCE7F0" : isUnknown ? "#FFF1F6" : "#FFF1F6",
-            color: "#543C49",
+            backgroundColor: isRight ? "var(--primary-light)" : isUnknown ? "var(--primary-soft)" : "var(--primary-soft)",
+            color: "var(--foreground)",
             borderRadius: isRight ? "16px 16px 4px 16px" : isUnknown ? "16px" : "16px 16px 16px 4px",
-            border: isUnknown ? "1px dashed #F0C8DC" : "none",
+            border: isUnknown ? "1px dashed var(--gold)" : "none",
           }}
         >
           <div className="whitespace-pre-wrap break-words">{message.content}</div>
@@ -226,7 +226,7 @@ function MessageRow({ message, onSaved, onDeleted }: MessageRowProps) {
             <span>#{message.sequence} · {ROLE_LABEL[message.senderRole]}</span>
             {message.timestamp && <span>{message.timestamp.slice(0, 16)}</span>}
             {message.manuallyCorrected && (
-              <Badge className="text-[10px]" style={{ backgroundColor: "#FFF1F6", color: "#E65B93" }}>
+              <Badge className="text-[10px]" style={{ backgroundColor: "var(--primary-soft)", color: "var(--primary)" }}>
                 已修正
               </Badge>
             )}
@@ -249,8 +249,8 @@ function MessageRow({ message, onSaved, onDeleted }: MessageRowProps) {
             className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full border opacity-0 shadow-sm transition-opacity group-hover:opacity-100"
             style={{
               backgroundColor: "#FFFFFF",
-              borderColor: "#F0C8DC",
-              color: "#E65B93",
+              borderColor: "var(--gold)",
+              color: "var(--primary)",
             }}
           >
             <Pencil className="size-3" />
@@ -306,13 +306,13 @@ export function ConversationView({ conversation, onChanged, onReanalyze, reanaly
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="font-medium" style={{ color: "#302436" }}>
+            <h3 className="font-medium" style={{ color: "var(--foreground)" }}>
               {conversation.title ?? "未命名对话"}
             </h3>
             <Badge
               variant="secondary"
               className="text-xs"
-              style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+              style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}
             >
               {conversation.messages.length} 条消息
             </Badge>
@@ -351,7 +351,7 @@ export function ConversationView({ conversation, onChanged, onReanalyze, reanaly
       {/* 聊天气泡区域 */}
       <div
         className="space-y-4 rounded-2xl p-4 sm:p-5"
-        style={{ backgroundColor: "#FFFAFC", border: "1px solid #F5E0EC" }}
+        style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--border)" }}
       >
         {conversation.messages.map((m) => (
           <div key={m.id} className="group">

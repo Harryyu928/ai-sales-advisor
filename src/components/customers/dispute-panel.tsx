@@ -104,9 +104,9 @@ export function DisputePanel({ customerId }: { customerId: string }) {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 rounded-[20px] bg-white p-5" style={{ border: "1px solid #F5E0EC" }}>
-        <Loader2 className="size-4 animate-spin" style={{ color: "#E65B93" }} />
-        <span className="text-xs" style={{ color: "#817786" }}>加载待确认信息…</span>
+      <div className="flex items-center gap-2 rounded-[20px] bg-white p-5" style={{ border: "1px solid var(--border)" }}>
+        <Loader2 className="size-4 animate-spin" style={{ color: "var(--primary)" }} />
+        <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>加载待确认信息…</span>
       </div>
     );
   }
@@ -141,7 +141,7 @@ export function DisputePanel({ customerId }: { customerId: string }) {
             className="rounded-[14px] bg-white p-4"
             style={{ border: "1px solid #F0E0C8" }}
           >
-            <div className="text-xs font-medium" style={{ color: "#302436" }}>
+            <div className="text-xs font-medium" style={{ color: "var(--foreground)" }}>
               {fieldLabel(g.fieldKey)}
             </div>
             <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -149,9 +149,9 @@ export function DisputePanel({ customerId }: { customerId: string }) {
                 <div className="text-[10px]" style={{ color: "#94818D" }}>原记录</div>
                 <div className="mt-0.5 text-xs" style={{ color: "#5A4A54" }}>{g.oldValue}</div>
               </div>
-              <div className="rounded-[10px] p-2.5" style={{ backgroundColor: "#FFF1F6" }}>
-                <div className="text-[10px]" style={{ color: "#C82E72" }}>本次新说法</div>
-                <div className="mt-0.5 text-xs" style={{ color: "#543C49" }}>{g.newValue}</div>
+              <div className="rounded-[10px] p-2.5" style={{ backgroundColor: "var(--primary-soft)" }}>
+                <div className="text-[10px]" style={{ color: "var(--primary-deep)" }}>本次新说法</div>
+                <div className="mt-0.5 text-xs" style={{ color: "var(--foreground)" }}>{g.newValue}</div>
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -159,7 +159,7 @@ export function DisputePanel({ customerId }: { customerId: string }) {
                 onClick={() => decide(g.fieldKey, "NEW")}
                 disabled={resolvingKey === g.fieldKey}
                 className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-medium text-white"
-                style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}
+                style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}
               >
                 {resolvingKey === g.fieldKey ? (
                   <Loader2 className="size-3 animate-spin" />
@@ -172,7 +172,7 @@ export function DisputePanel({ customerId }: { customerId: string }) {
                 onClick={() => decide(g.fieldKey, "OLD")}
                 disabled={resolvingKey === g.fieldKey}
                 className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-medium"
-                style={{ backgroundColor: "#FFFAFC", color: "#817786", border: "1px solid #E0D0D8" }}
+                style={{ backgroundColor: "#FFFAFC", color: "var(--muted-foreground)", border: "1px solid #E0D0D8" }}
               >
                 保留原记录
               </button>

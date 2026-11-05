@@ -88,7 +88,7 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
       >
         {/* 标题栏 */}
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-lg font-semibold" style={{ color: "#302436" }}>
+          <h3 className="text-lg font-semibold" style={{ color: "var(--foreground)" }}>
             新建知识
           </h3>
           <button
@@ -103,7 +103,7 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
         <div className="space-y-4">
           {/* 标题 */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+            <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
               知识标题
             </label>
             <input
@@ -112,21 +112,21 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="例如：2026年雅思考试报名时间"
               className="w-full rounded-[12px] px-4 py-2.5 text-sm outline-none"
-              style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC", color: "#302436" }}
+              style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--gold)", color: "var(--foreground)" }}
             />
           </div>
 
           {/* 分类 + 考试 */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+              <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
                 分类
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full rounded-[12px] px-4 py-2.5 text-sm outline-none"
-                style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC", color: "#302436" }}
+                style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--gold)", color: "var(--foreground)" }}
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -136,7 +136,7 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+              <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
                 考试/主题（选填）
               </label>
               <input
@@ -145,14 +145,14 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
                 onChange={(e) => setExamType(e.target.value)}
                 placeholder="例如：雅思"
                 className="w-full rounded-[12px] px-4 py-2.5 text-sm outline-none"
-                style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC", color: "#302436" }}
+                style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--gold)", color: "var(--foreground)" }}
               />
             </div>
           </div>
 
           {/* 内容 */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+            <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
               知识内容
             </label>
             <textarea
@@ -161,22 +161,22 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
               rows={6}
               placeholder="输入知识的详细内容，AI 回复时会参考这些内容……"
               className="w-full rounded-[12px] p-4 text-sm leading-relaxed outline-none"
-              style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC", color: "#302436", resize: "vertical" }}
+              style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--gold)", color: "var(--foreground)", resize: "vertical" }}
             />
           </div>
 
           {/* 来源信息 */}
-          <div className="space-y-3 rounded-[14px] p-3.5" style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC" }}>
+          <div className="space-y-3 rounded-[14px] p-3.5" style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--gold)" }}>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+                <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
                   来源类型
                 </label>
                 <select
                   value={sourceType}
                   onChange={(e) => setSourceType(e.target.value)}
                   className="w-full rounded-[12px] px-3 py-2.5 text-sm outline-none"
-                  style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+                  style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--gold)", color: "var(--foreground)" }}
                 >
                   {SOURCE_TYPES.map((s) => (
                     <option key={s.value} value={s.value}>{s.label}</option>
@@ -184,7 +184,7 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
                 </select>
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+                <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
                   核实日期（选填）
                 </label>
                 <input
@@ -192,12 +192,12 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
                   value={verifiedAt}
                   onChange={(e) => setVerifiedAt(e.target.value)}
                   className="w-full rounded-[12px] px-3 py-2.5 text-sm outline-none"
-                  style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+                  style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--gold)", color: "var(--foreground)" }}
                 />
               </div>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+              <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
                 来源链接（选填）
               </label>
               <input
@@ -206,11 +206,11 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
                 onChange={(e) => setSourceUrl(e.target.value)}
                 placeholder="例如：https://www.ielts.org"
                 className="w-full rounded-[12px] px-4 py-2.5 text-sm outline-none"
-                style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+                style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--gold)", color: "var(--foreground)" }}
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium" style={{ color: "#817786" }}>
+              <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>
                 生效日期（选填）
               </label>
               <input
@@ -218,7 +218,7 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
                 value={effectiveDate}
                 onChange={(e) => setEffectiveDate(e.target.value)}
                 className="w-full rounded-[12px] px-3 py-2.5 text-sm outline-none"
-                style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0C8DC", color: "#302436" }}
+                style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--gold)", color: "var(--foreground)" }}
               />
             </div>
             <p className="text-xs" style={{ color: "#94818D" }}>
@@ -237,7 +237,7 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
             <button
               onClick={onClose}
               className="flex-1 rounded-[12px] py-3 text-sm font-medium"
-              style={{ backgroundColor: "#FFF1F6", color: "#817786" }}
+              style={{ backgroundColor: "var(--primary-soft)", color: "var(--muted-foreground)" }}
             >
               取消
             </button>
@@ -245,7 +245,7 @@ export function KnowledgeForm({ onClose, onSaved }: KnowledgeFormProps) {
               onClick={save}
               disabled={saving}
               className="flex flex-1 items-center justify-center gap-2 rounded-[12px] py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
-              style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}
+              style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}
             >
               {saving ? "保存中…" : (<><Plus className="size-4" /> 保存知识</>)}
             </button>

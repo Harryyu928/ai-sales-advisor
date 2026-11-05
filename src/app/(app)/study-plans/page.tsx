@@ -11,15 +11,15 @@ export default function StudyPlansPage() {
       <div className="flex items-center gap-3">
         <div
           className="flex size-10 items-center justify-center rounded-[12px]"
-          style={{ backgroundColor: "#FCE7F0" }}
+          style={{ backgroundColor: "var(--primary-light)" }}
         >
-          <GraduationCap className="size-5" style={{ color: "#E65B93" }} />
+          <GraduationCap className="size-5" style={{ color: "var(--primary)" }} />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold md:text-[28px]" style={{ color: "#302436" }}>
+          <h1 className="text-2xl font-semibold md:text-[28px]" style={{ color: "var(--foreground)" }}>
             语言备考路径
           </h1>
-          <p className="mt-0.5 text-sm" style={{ color: "#817786" }}>
+          <p className="mt-0.5 text-sm" style={{ color: "var(--muted-foreground)" }}>
             结合客户基础快速生成可执行备考路径，一键生成微信沟通版
           </p>
         </div>

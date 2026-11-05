@@ -67,7 +67,7 @@ export function KnowledgeClient({ initialCount }: KnowledgeClientProps) {
       <button
         onClick={() => setShowForm(true)}
         className="flex h-12 items-center justify-center gap-2 rounded-[16px] px-5 text-sm font-medium text-white transition-all duration-200 hover:opacity-90"
-        style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}
+        style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}
       >
         <Plus className="size-4" />
         新建知识
@@ -76,7 +76,7 @@ export function KnowledgeClient({ initialCount }: KnowledgeClientProps) {
       {/* 最近更新列表 */}
       {loading && recent.length === 0 ? (
         <div className="flex items-center justify-center py-6">
-          <RefreshCw className="size-4 animate-spin" style={{ color: "#E65B93" }} />
+          <RefreshCw className="size-4 animate-spin" style={{ color: "var(--primary)" }} />
         </div>
       ) : recent.length > 0 ? (
         <div className="space-y-2.5">
@@ -88,16 +88,16 @@ export function KnowledgeClient({ initialCount }: KnowledgeClientProps) {
               <div
                 key={item.id}
                 className="rounded-[14px] px-4 py-3"
-                style={{ backgroundColor: "#FFFAFC", border: "1px solid #F5E0EC" }}
+                style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--border)" }}
               >
                 <div className="flex items-center gap-2.5">
                   <span
                     className="inline-block rounded-full px-2.5 py-0.5 text-[11px] font-medium shrink-0"
-                    style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+                    style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}
                   >
                     {CATEGORY_LABELS[item.category] || item.category}
                   </span>
-                  <span className="flex-1 truncate text-sm font-medium" style={{ color: "#302436" }}>
+                  <span className="flex-1 truncate text-sm font-medium" style={{ color: "var(--foreground)" }}>
                     {item.title}
                   </span>
                   {expired && (
@@ -109,9 +109,9 @@ export function KnowledgeClient({ initialCount }: KnowledgeClientProps) {
                 </div>
 
                 {/* 来源信息行 */}
-                <div className="mt-2 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[10px]" style={{ color: "#817786" }}>
+                <div className="mt-2 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[10px]" style={{ color: "var(--muted-foreground)" }}>
                   <span className="flex items-center gap-1">
-                    <ShieldCheck className="size-3" style={{ color: "#E65B93" }} />
+                    <ShieldCheck className="size-3" style={{ color: "var(--primary)" }} />
                     {SOURCE_LABELS[item.sourceType || "manual"] || "内部整理"}
                   </span>
                   {item.verifiedAt && (
@@ -129,7 +129,7 @@ export function KnowledgeClient({ initialCount }: KnowledgeClientProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-0.5"
-                      style={{ color: "#C82E72" }}
+                      style={{ color: "var(--primary-deep)" }}
                     >
                       查看来源 <ExternalLink className="size-2.5" />
                     </a>
@@ -141,8 +141,8 @@ export function KnowledgeClient({ initialCount }: KnowledgeClientProps) {
         </div>
       ) : (
         <div className="flex flex-col items-center py-8 text-center">
-          <FileText className="size-8 mb-2" style={{ color: "#F0C8DC" }} />
-          <p className="text-sm" style={{ color: "#817786" }}>
+          <FileText className="size-8 mb-2" style={{ color: "var(--gold)" }} />
+          <p className="text-sm" style={{ color: "var(--muted-foreground)" }}>
             暂无知识条目
           </p>
           <p className="mt-1 text-xs" style={{ color: "#94818D" }}>

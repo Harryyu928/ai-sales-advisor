@@ -224,8 +224,8 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
   }
 
   const stageColors: Record<string, string> = {
-    "初次咨询": "#5B8FD6", "需求确认": "#E65B93", "方案讨论": "#2D9B7E",
-    "价格敏感": "#C47A20", "即将签约": "#8B5CF6", "售后跟进": "#817786",
+    "初次咨询": "#5B8FD6", "需求确认": "var(--primary)", "方案讨论": "#2D9B7E",
+    "价格敏感": "#C47A20", "即将签约": "#8B5CF6", "售后跟进": "var(--muted-foreground)",
   };
 
   const highIssues = result?.quality.issues.filter((i) => i.severity === "HIGH") ?? [];
@@ -234,17 +234,17 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
   return (
     <div
       className="rounded-[20px] p-5 md:p-6"
-      style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC", boxShadow: "0 2px 12px rgba(230,91,147,0.05)" }}
+      style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)", boxShadow: "0 2px 12px rgba(230,91,147,0.05)" }}
     >
       {/* 标题 */}
       <div className="flex items-center gap-2.5 mb-4">
         <div className="flex size-8 items-center justify-center rounded-[10px]"
-          style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}>
+          style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}>
           <Sparkles className="size-4 text-white" />
         </div>
-        <h3 className="font-semibold" style={{ color: "#302436" }}>AI 推荐回复</h3>
+        <h3 className="font-semibold" style={{ color: "var(--foreground)" }}>AI 推荐回复</h3>
         {result && (
-          <span className="text-xs" style={{ color: "#817786" }}>
+          <span className="text-xs" style={{ color: "var(--muted-foreground)" }}>
             · {(result.totalLatencyMs / 1000).toFixed(1)}s
           </span>
         )}
@@ -256,9 +256,9 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
           <button key={key} onClick={() => setStyle(key)} disabled={generating}
             className="rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-200"
             style={{
-              backgroundColor: style === key ? "#FCE7F0" : "#FFFAFC",
-              color: style === key ? "#C82E72" : "#817786",
-              border: style === key ? "1px solid #F0C8DC" : "1px solid #F5E0EC",
+              backgroundColor: style === key ? "var(--primary-light)" : "#FFFAFC",
+              color: style === key ? "var(--primary-deep)" : "var(--muted-foreground)",
+              border: style === key ? "1px solid var(--gold)" : "1px solid var(--border)",
             }}>
             {s.label}
           </button>
@@ -268,15 +268,15 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
       {!result && !generating && (
         <Button onClick={generate} disabled={disabled}
           className="w-full h-11 text-white hover:opacity-90"
-          style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}>
+          style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}>
           <Sparkles className="size-4" />生成建议回复
         </Button>
       )}
 
       {generating && (
         <div className="flex items-center justify-center py-8">
-          <RefreshCw className="size-5 animate-spin mr-2" style={{ color: "#E65B93" }} />
-          <span className="text-sm" style={{ color: "#817786" }}>AI 正在分析客户并生成回复…</span>
+          <RefreshCw className="size-5 animate-spin mr-2" style={{ color: "var(--primary)" }} />
+          <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>AI 正在分析客户并生成回复…</span>
         </div>
       )}
 
@@ -301,10 +301,10 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
           {editing ? (
             <textarea value={draft} onChange={(e) => setDraft(e.target.value)} rows={5}
               className="w-full rounded-[12px] p-4 text-sm leading-relaxed"
-              style={{ backgroundColor: "#FFF1F6", border: "1px solid #F0C8DC", color: "#302436", resize: "vertical" }} />
+              style={{ backgroundColor: "var(--primary-soft)", border: "1px solid var(--gold)", color: "var(--foreground)", resize: "vertical" }} />
           ) : (
             <div className="rounded-[14px] p-4 text-sm leading-[1.7]"
-              style={{ backgroundColor: "#FFF1F6", color: "#543C49" }}>
+              style={{ backgroundColor: "var(--primary-soft)", color: "var(--foreground)" }}>
               {currentText}
             </div>
           )}
@@ -313,7 +313,7 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
           <div className="flex flex-wrap items-center gap-2">
             <Button onClick={copy}
               className="h-10 px-4 text-white"
-              style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}>
+              style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}>
               {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
               {copied ? "已复制" : "复制回复"}
             </Button>
@@ -330,9 +330,9 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
 
           {/* 话术沉淀操作：收藏 / 确认发送 / 效果好 */}
           <div className="flex flex-wrap items-center gap-2 pt-1"
-            style={{ borderTop: "1px dashed #F0C8DC" }}>
+            style={{ borderTop: "1px dashed var(--gold)" }}>
             <Button variant="outline" onClick={collect} disabled={actionLoading || !!savedId} className="h-9 text-xs">
-              <Star className="size-3.5" style={{ color: savedId ? "#E65B93" : undefined }} />
+              <Star className="size-3.5" style={{ color: savedId ? "var(--primary)" : undefined }} />
               {savedId ? "已收藏" : "收藏为优秀话术"}
             </Button>
             <Button variant="outline" onClick={() => markAction("SENT")}
@@ -375,28 +375,28 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
 
           {/* 多轮客户沟通模拟结果（功能10） */}
           {simulation && (
-            <div className="pt-3" style={{ borderTop: "1px solid #F5E0EC" }}>
+            <div className="pt-3" style={{ borderTop: "1px solid var(--border)" }}>
               <button onClick={() => setSimOpen(!simOpen)} className="flex w-full items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Users className="size-4" style={{ color: "#E65B93" }} />
-                  <span className="text-sm font-medium" style={{ color: "#302436" }}>
+                  <Users className="size-4" style={{ color: "var(--primary)" }} />
+                  <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
                     客户反应模拟（{simulation.responses.length}）
                   </span>
                 </div>
-                <ChevronDown className="size-4 transition-transform" style={{ color: "#817786", transform: simOpen ? "rotate(180deg)" : "rotate(0)" }} />
+                <ChevronDown className="size-4 transition-transform" style={{ color: "var(--muted-foreground)", transform: simOpen ? "rotate(180deg)" : "rotate(0)" }} />
               </button>
               {simOpen && (
                 <div className="mt-3 space-y-3">
                   <p className="text-[11px]" style={{ color: "#94818D" }}>{simulation.disclaimer}</p>
                   {simulation.responses.map((r, i) => (
                     <div key={i} className="rounded-[12px] p-3"
-                      style={{ backgroundColor: "#FFFAFC", border: "1px solid #F5E0EC" }}>
+                      style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--border)" }}>
                       <span className="rounded-full px-2.5 py-0.5 text-[10px]"
-                        style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}>
+                        style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}>
                         {r.tendency}
                       </span>
-                      <div className="mt-2 text-xs leading-relaxed" style={{ color: "#543C49" }}>
-                        <span className="font-medium" style={{ color: "#C82E72" }}>客户可能：</span>
+                      <div className="mt-2 text-xs leading-relaxed" style={{ color: "var(--foreground)" }}>
+                        <span className="font-medium" style={{ color: "var(--primary-deep)" }}>客户可能：</span>
                         {r.customerReply}
                       </div>
                       {r.advisorTip && (
@@ -414,13 +414,13 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
 
           {/* 专业依据折叠区 */}
           {result.knowledgeReferences.length > 0 && (
-            <div className="pt-3" style={{ borderTop: "1px solid #F5E0EC" }}>
+            <div className="pt-3" style={{ borderTop: "1px solid var(--border)" }}>
               <button onClick={() => setEvidenceOpen(!evidenceOpen)} className="flex w-full items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <BookMarked className="size-4" style={{ color: "#E65B93" }} />
-                  <span className="text-sm font-medium" style={{ color: "#302436" }}>专业依据（{result.knowledgeReferences.length}）</span>
+                  <BookMarked className="size-4" style={{ color: "var(--primary)" }} />
+                  <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>专业依据（{result.knowledgeReferences.length}）</span>
                 </div>
-                <ChevronDown className="size-4 transition-transform" style={{ color: "#817786", transform: evidenceOpen ? "rotate(180deg)" : "rotate(0)" }} />
+                <ChevronDown className="size-4 transition-transform" style={{ color: "var(--muted-foreground)", transform: evidenceOpen ? "rotate(180deg)" : "rotate(0)" }} />
               </button>
               {evidenceOpen && (
                 <div className="mt-3 space-y-3">
@@ -428,22 +428,22 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                     const expired = ref.effectiveDate ? new Date(ref.effectiveDate) < new Date() : false;
                     return (
                       <div key={ref.id} className="rounded-[12px] p-3"
-                        style={{ backgroundColor: "#FFFAFC", border: "1px solid #F5E0EC" }}>
+                        style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--border)" }}>
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <p className="text-xs font-medium" style={{ color: "#302436" }}>{ref.title}</p>
+                          <p className="text-xs font-medium" style={{ color: "var(--foreground)" }}>{ref.title}</p>
                           {expired && (
                             <span className="rounded-full px-2 py-0.5 text-[10px]"
                               style={{ backgroundColor: "#FDECEC", color: "#D94052" }}>可能已过期</span>
                           )}
                         </div>
-                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[10px]" style={{ color: "#817786" }}>
+                        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[10px]" style={{ color: "var(--muted-foreground)" }}>
                           {ref.examType && <span>考试：{ref.examType}</span>}
                           {ref.sourceType && <span>来源：{ref.sourceType}</span>}
                           {ref.verifiedAt && <span>核实：{ref.verifiedAt.slice(0, 10)}</span>}
                         </div>
                         {ref.sourceUrl && (
                           <a href={ref.sourceUrl} target="_blank" rel="noopener noreferrer"
-                            className="mt-1 inline-block text-[11px]" style={{ color: "#C82E72" }}>
+                            className="mt-1 inline-block text-[11px]" style={{ color: "var(--primary-deep)" }}>
                             查看官方来源 ↗
                           </a>
                         )}
@@ -456,20 +456,20 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
           )}
 
           {/* 沟通分析折叠区 */}
-          <div className="pt-3" style={{ borderTop: "1px solid #F5E0EC" }}>
+          <div className="pt-3" style={{ borderTop: "1px solid var(--border)" }}>
             <button onClick={() => setAnalysisOpen(!analysisOpen)} className="flex w-full items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageCircle className="size-4" style={{ color: "#E65B93" }} />
-                <span className="text-sm font-medium" style={{ color: "#302436" }}>沟通分析</span>
+                <MessageCircle className="size-4" style={{ color: "var(--primary)" }} />
+                <span className="text-sm font-medium" style={{ color: "var(--foreground)" }}>沟通分析</span>
               </div>
-              <ChevronDown className="size-4 transition-transform" style={{ color: "#817786", transform: analysisOpen ? "rotate(180deg)" : "rotate(0)" }} />
+              <ChevronDown className="size-4 transition-transform" style={{ color: "var(--muted-foreground)", transform: analysisOpen ? "rotate(180deg)" : "rotate(0)" }} />
             </button>
 
             {analysisOpen && (
               <div className="mt-4 space-y-4">
                 {result.analysis.currentQuestion && (
                   <Section icon={Target} title="客户当前问题">
-                    <p className="text-sm" style={{ color: "#302436" }}>{result.analysis.currentQuestion}</p>
+                    <p className="text-sm" style={{ color: "var(--foreground)" }}>{result.analysis.currentQuestion}</p>
                   </Section>
                 )}
 
@@ -477,8 +477,8 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                   <Section icon={Lightbulb} title="显性需求（客户明确表达）">
                     <ul className="space-y-1">
                       {result.analysis.explicitNeeds.map((n, i) => (
-                        <li key={i} className="text-sm flex items-start gap-1.5" style={{ color: "#543C49" }}>
-                          <span className="mt-1.5 size-1 rounded-full" style={{ backgroundColor: "#E65B93" }} />{n}
+                        <li key={i} className="text-sm flex items-start gap-1.5" style={{ color: "var(--foreground)" }}>
+                          <span className="mt-1.5 size-1 rounded-full" style={{ backgroundColor: "var(--primary)" }} />{n}
                         </li>
                       ))}
                     </ul>
@@ -490,18 +490,18 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                     <div className="space-y-2">
                       {result.analysis.potentialConcerns.map((c, i) => (
                         <div key={i} className="rounded-[10px] p-2.5"
-                          style={{ backgroundColor: c.certainty === "FACT" ? "#FCE7F0" : "#FFFAFC", border: "1px solid #F5E0EC" }}>
+                          style={{ backgroundColor: c.certainty === "FACT" ? "var(--primary-light)" : "#FFFAFC", border: "1px solid var(--border)" }}>
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="rounded-full px-2 py-0.5 text-[10px] font-medium"
                               style={c.certainty === "FACT"
-                                ? { backgroundColor: "#E65B93", color: "#fff" }
-                                : { backgroundColor: "#F0E4F2", color: "#817786" }}>
+                                ? { backgroundColor: "var(--primary)", color: "#fff" }
+                                : { backgroundColor: "#F0E4F2", color: "var(--muted-foreground)" }}>
                               {c.certainty === "FACT" ? "明确表达" : "可能性推测"}
                             </span>
-                            <p className="text-xs font-medium" style={{ color: "#302436" }}>{c.concern}</p>
+                            <p className="text-xs font-medium" style={{ color: "var(--foreground)" }}>{c.concern}</p>
                           </div>
                           {c.evidence && (
-                            <p className="mt-1 text-[11px]" style={{ color: "#817786" }}>依据：{c.evidence}</p>
+                            <p className="mt-1 text-[11px]" style={{ color: "var(--muted-foreground)" }}>依据：{c.evidence}</p>
                           )}
                         </div>
                       ))}
@@ -520,7 +520,7 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                             {c.fieldKey}：此前「{c.previousValue || "未记录"}」→ 本次「{c.newValue}」
                           </p>
                           {c.confirmPhrase && (
-                            <p className="mt-1 text-[11px]" style={{ color: "#543C49" }}>可这样确认：{c.confirmPhrase}</p>
+                            <p className="mt-1 text-[11px]" style={{ color: "var(--foreground)" }}>可这样确认：{c.confirmPhrase}</p>
                           )}
                         </div>
                       ))}
@@ -531,7 +531,7 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                 {result.analysis.stage && (
                   <Section icon={Flag} title="咨询阶段">
                     <span className="inline-block rounded-full px-3 py-1 text-xs font-medium"
-                      style={{ backgroundColor: "#FCE7F0", color: stageColors[result.analysis.stage] || "#C82E72" }}>
+                      style={{ backgroundColor: "var(--primary-light)", color: stageColors[result.analysis.stage] || "var(--primary-deep)" }}>
                       {result.analysis.stage}
                     </span>
                   </Section>
@@ -541,7 +541,7 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                   <Section icon={Check} title="已确认信息">
                     <ul className="space-y-1">
                       {result.analysis.confirmedInfo.map((n, i) => (
-                        <li key={i} className="text-sm flex items-start gap-1.5" style={{ color: "#543C49" }}>
+                        <li key={i} className="text-sm flex items-start gap-1.5" style={{ color: "var(--foreground)" }}>
                           <Check className="size-3.5 mt-0.5" style={{ color: "#2D9B7E" }} />{n}
                         </li>
                       ))}
@@ -553,7 +553,7 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
                   <Section icon={Info} title="待确认信息">
                     <ul className="space-y-1">
                       {result.analysis.needConfirmInfo.map((n, i) => (
-                        <li key={i} className="text-sm flex items-start gap-1.5" style={{ color: "#543C49" }}>
+                        <li key={i} className="text-sm flex items-start gap-1.5" style={{ color: "var(--foreground)" }}>
                           <span className="mt-1.5 size-1 rounded-full" style={{ backgroundColor: "#C47A20" }} />{n}
                         </li>
                       ))}
@@ -563,7 +563,7 @@ export function ReplyPanel({ conversationId, disabled }: ReplyPanelProps) {
 
                 {result.analysis.recommendedDirection && (
                   <Section icon={Lightbulb} title="最合适沟通方向">
-                    <p className="text-sm" style={{ color: "#302436" }}>{result.analysis.recommendedDirection}</p>
+                    <p className="text-sm" style={{ color: "var(--foreground)" }}>{result.analysis.recommendedDirection}</p>
                   </Section>
                 )}
               </div>
@@ -581,8 +581,8 @@ function Section({ icon: Icon, title, children }: {
   return (
     <div>
       <div className="flex items-center gap-1.5 mb-1.5">
-        <Icon className="size-3.5" style={{ color: "#E65B93" }} />
-        <span className="text-xs font-medium" style={{ color: "#817786" }}>{title}</span>
+        <Icon className="size-3.5" style={{ color: "var(--primary)" }} />
+        <span className="text-xs font-medium" style={{ color: "var(--muted-foreground)" }}>{title}</span>
       </div>
       {children}
     </div>

@@ -46,16 +46,16 @@ export function PasteText({ onParsed }: PasteTextProps) {
   return (
     <div
       className="rounded-[18px] p-5"
-      style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}
+      style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}
     >
       <div className="flex items-center gap-2 mb-3">
         <div
           className="flex size-8 items-center justify-center rounded-[10px]"
-          style={{ backgroundColor: "#FCE7F0" }}
+          style={{ backgroundColor: "var(--primary-light)" }}
         >
-          <ClipboardPaste className="size-4" style={{ color: "#E65B93" }} />
+          <ClipboardPaste className="size-4" style={{ color: "var(--primary)" }} />
         </div>
-        <h3 className="text-sm font-semibold" style={{ color: "#302436" }}>
+        <h3 className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
           粘贴聊天记录
         </h3>
         <span className="text-xs" style={{ color: "#94818D" }}>
@@ -69,7 +69,7 @@ export function PasteText({ onParsed }: PasteTextProps) {
         placeholder="粘贴微信聊天记录，例如：&#10;&#10;客户：你好，我想问一下雅思怎么报名？&#10;顾问：你好！雅思机考和纸笔都可以……&#10;客户：好的，我目标6.5分……"
         rows={6}
         className="w-full rounded-[12px] p-4 text-sm leading-relaxed outline-none resize-none"
-        style={{ backgroundColor: "#FFFAFC", border: "1px solid #F0C8DC", color: "#302436" }}
+        style={{ backgroundColor: "#FFFAFC", border: "1px solid var(--gold)", color: "var(--foreground)" }}
       />
 
       {error && (

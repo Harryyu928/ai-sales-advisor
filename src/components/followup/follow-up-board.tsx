@@ -240,7 +240,7 @@ export function FollowUpBoard() {
             className="rounded-[16px] p-4"
             style={{
               backgroundColor: c.alert && (summary?.[c.key] ?? 0) > 0 ? "#FDECEC" : "#FFFFFF",
-              border: "1px solid #F5E0EC",
+              border: "1px solid var(--border)",
             }}
           >
             <div className="text-xs" style={{ color: "#94818D" }}>
@@ -248,7 +248,7 @@ export function FollowUpBoard() {
             </div>
             <div
               className="mt-1 text-2xl font-semibold"
-              style={{ color: c.alert && (summary?.[c.key] ?? 0) > 0 ? "#D05252" : "#302436" }}
+              style={{ color: c.alert && (summary?.[c.key] ?? 0) > 0 ? "#D05252" : "var(--foreground)" }}
             >
               {summary?.[c.key] ?? "—"}
             </div>
@@ -277,9 +277,9 @@ export function FollowUpBoard() {
                 onClick={() => setFilter(f.key)}
                 className="rounded-full px-3.5 py-1.5 text-xs font-medium transition-all"
                 style={{
-                  backgroundColor: active ? "#E65B93" : "#FFFFFF",
-                  color: active ? "#FFFFFF" : "#817786",
-                  border: "1px solid " + (active ? "#E65B93" : "#F0E0E8"),
+                  backgroundColor: active ? "var(--primary)" : "#FFFFFF",
+                  color: active ? "#FFFFFF" : "var(--muted-foreground)",
+                  border: "1px solid " + (active ? "var(--primary)" : "#F0E0E8"),
                 }}
               >
                 {f.label}
@@ -295,8 +295,8 @@ export function FollowUpBoard() {
 
       {/* 新建表单 */}
       {showCreate && (
-        <div className="space-y-3 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
-          <div className="text-sm font-medium" style={{ color: "#302436" }}>新建待办</div>
+        <div className="space-y-3 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
+          <div className="text-sm font-medium" style={{ color: "var(--foreground)" }}>新建待办</div>
           <Input
             placeholder="待办事项，如：把雅思备考方案发给客户"
             value={form.title}
@@ -337,7 +337,7 @@ export function FollowUpBoard() {
             <Loader2 className="size-4 animate-spin" /> 加载中…
           </div>
         ) : tasks.length === 0 ? (
-          <div className="rounded-[18px] py-14 text-center" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+          <div className="rounded-[18px] py-14 text-center" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
             <CalendarClock className="mx-auto size-7" style={{ color: "#D8C8D2" }} />
             <div className="mt-3 text-sm" style={{ color: "#94818D" }}>当前筛选下没有待办</div>
           </div>
@@ -349,7 +349,7 @@ export function FollowUpBoard() {
 
             if (editingId === task.id) {
               return (
-                <div key={task.id} className="space-y-3 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}>
+                <div key={task.id} className="space-y-3 rounded-[18px] p-5" style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}>
                   <Input
                     value={editForm.title}
                     onChange={(e) => setEditForm((p) => ({ ...p, title: e.target.value }))}
@@ -382,7 +382,7 @@ export function FollowUpBoard() {
                 className="rounded-[18px] p-4 md:p-5"
                 style={{
                   backgroundColor: "#FFFFFF",
-                  border: "1px solid " + (overdue ? "#F5C8C8" : "#F5E0EC"),
+                  border: "1px solid " + (overdue ? "#F5C8C8" : "var(--border)"),
                   opacity: done || canceled ? 0.7 : 1,
                 }}
               >
@@ -393,8 +393,8 @@ export function FollowUpBoard() {
                     aria-label={done ? "重新打开" : "标记完成"}
                     className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border transition-all"
                     style={{
-                      backgroundColor: done ? "#E65B93" : "transparent",
-                      borderColor: done ? "#E65B93" : "#E0D0D8",
+                      backgroundColor: done ? "var(--primary)" : "transparent",
+                      borderColor: done ? "var(--primary)" : "#E0D0D8",
                       color: "#FFFFFF",
                     }}
                   >
@@ -405,7 +405,7 @@ export function FollowUpBoard() {
                     <div
                       className="text-sm font-medium"
                       style={{
-                        color: "#302436",
+                        color: "var(--foreground)",
                         textDecoration: done ? "line-through" : "none",
                       }}
                     >
@@ -415,7 +415,7 @@ export function FollowUpBoard() {
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
                       <span
                         className="rounded-full px-2.5 py-0.5"
-                        style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+                        style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}
                       >
                         {TYPE_LABEL[task.taskType]}
                       </span>
@@ -436,7 +436,7 @@ export function FollowUpBoard() {
                     {task.description && (
                       <div
                         className="mt-2 rounded-lg px-2.5 py-1.5 text-[11px]"
-                        style={{ backgroundColor: "#FFF6F9", color: "#817786" }}
+                        style={{ backgroundColor: "#FFF6F9", color: "var(--muted-foreground)" }}
                       >
                         {task.description}
                       </div>

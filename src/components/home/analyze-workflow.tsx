@@ -148,9 +148,9 @@ export function AnalyzeWorkflow() {
       {assets.length > 0 && (
         <div
           className="space-y-3 card-lift rounded-[18px] p-5"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}
+          style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}
         >
-          <div className="text-sm font-medium" style={{ color: "#302436" }}>
+          <div className="text-sm font-medium" style={{ color: "var(--foreground)" }}>
             待识别截图（{assets.length} 张）—— 第 1 张为最早截图
           </div>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
@@ -231,7 +231,7 @@ export function AnalyzeWorkflow() {
       {conversation && !analyzing && (
         <div
           className="rounded-[18px] p-5"
-          style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}
+          style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}
         >
           {conversation.recognitionMeta?.model === "mock-vision-fixture" && (
             <Alert className="mb-4">
@@ -254,17 +254,17 @@ export function AnalyzeWorkflow() {
       {/* 最近识别记录 */}
       <div
         className="rounded-[18px]"
-        style={{ backgroundColor: "#FFFFFF", border: "1px solid #F5E0EC" }}
+        style={{ backgroundColor: "#FFFFFF", border: "1px solid var(--border)" }}
       >
         <button
           onClick={() => setShowRecent((v) => !v)}
           className="flex w-full items-center justify-between px-5 py-4 text-left"
         >
-          <span className="flex items-center gap-2 text-sm font-medium" style={{ color: "#302436" }}>
-            <History className="size-4" style={{ color: "#E65B93" }} />
+          <span className="flex items-center gap-2 text-sm font-medium" style={{ color: "var(--foreground)" }}>
+            <History className="size-4" style={{ color: "var(--primary)" }} />
             最近识别记录
             {!loadingRecent && recent.length > 0 && (
-              <span className="rounded-full px-2 py-0.5 text-xs" style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}>
+              <span className="rounded-full px-2 py-0.5 text-xs" style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}>
                 {recent.length}
               </span>
             )}
@@ -290,10 +290,10 @@ export function AnalyzeWorkflow() {
                       onClick={() => viewConversation(c.id)}
                       className="flex w-full items-center justify-between gap-3 py-2.5 text-left rounded-lg transition-colors"
                       style={{ backgroundColor: "transparent" }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#FFF1F6"}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--primary-soft)"}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                     >
-                      <span className="truncate text-sm" style={{ color: "#302436" }}>{c.title ?? "未命名对话"}</span>
+                      <span className="truncate text-sm" style={{ color: "var(--foreground)" }}>{c.title ?? "未命名对话"}</span>
                       <span className="shrink-0 text-xs" style={{ color: "#94818D" }}>
                         {c._count.messages} 条消息 · {c._count.screenshots} 张截图 ·{" "}
                         {new Date(c.createdAt).toLocaleString("zh-CN", {
