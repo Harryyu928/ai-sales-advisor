@@ -8,27 +8,36 @@ import { runCustomerDiagnostic } from "@/services/customer-diagnostic-service";
 export const maxDuration = 90;
 export const runtime = "nodejs";
 
-// GET /api/customers/[id]/diagnose —— 获取最新诊断
+// GET /api/customers/[id]/diagnose —— 获取诊断（默认最新，?versionId= 加载指定历史版本）
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   return handle(async () => {
     const user = await getSessionUser();
     if (!user) throw new ApiError(401, "未登录");
     const { id } = await params;
+    const url = new URL(req.url);
+    const versionId = url.searchParams.get("versionId");
 
-    const diag = await prisma.customerDiagnostic.findFirst({
-      where: { customerId: id, userId: user.id, isLatest: true },
-      orderBy: { createdAt: "desc" },
-    });
-
-    // 同时返回历史版本数
-    const totalVersions = await prisma.customerDiagnostic.count({
+    // 版本列表（供历史抽屉）
+    const versions = await prisma.customerDiagnostic.findMany({
       where: { customerId: id, userId: user.id },
+      orderBy: { version: "desc" },
+      select: { id: true, version: true, createdAt: true, salesStage: true, completeness: true },
     });
 
-    return { ok: true, data: { diagnostic: diag, totalVersions } };
+    // 指定版本 or 最新
+    const diag = versionId
+      ? await prisma.customerDiagnostic.findFirst({
+          where: { id: versionId, customerId: id, userId: user.id },
+        })
+      : await prisma.customerDiagnostic.findFirst({
+          where: { customerId: id, userId: user.id, isLatest: true },
+          orderBy: { createdAt: "desc" },
+        });
+
+    return NextResponse.json({ ok: true, data: { diagnostic: diag, versions } });
   });
 }
 
@@ -43,6 +52,6 @@ export async function POST(
     const { id } = await params;
 
     const result = await runCustomerDiagnostic(id, user.id);
-    return { ok: true, data: result };
+    return NextResponse.json({ ok: true, data: result });
   });
 }
