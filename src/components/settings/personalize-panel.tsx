@@ -33,6 +33,10 @@ export function PersonalizePanel({ defaultName }: Props) {
     signature: "",
   });
   const [theme, setTheme] = useState("rose-champagne");
+  const [density, setDensity] = useState("comfortable");
+  const [radius, setRadius] = useState("soft");
+  const [motion, setMotion] = useState("gentle");
+  const [welcomeArea, setWelcomeArea] = useState(true);
 
   useEffect(() => {
     fetch("/api/profile")
@@ -53,6 +57,10 @@ export function PersonalizePanel({ defaultName }: Props) {
             });
           }
           if (res.data.theme?.theme) setTheme(res.data.theme.theme);
+          if (res.data.theme?.density) setDensity(res.data.theme.density);
+          if (res.data.theme?.radius) setRadius(res.data.theme.radius);
+          if (res.data.theme?.motion) setMotion(res.data.theme.motion);
+          if (typeof res.data.theme?.welcomeArea === "boolean") setWelcomeArea(res.data.theme.welcomeArea);
         }
       })
       .finally(() => setLoading(false));
@@ -65,7 +73,7 @@ export function PersonalizePanel({ defaultName }: Props) {
       const res = await fetch("/api/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identity, theme: { theme } }),
+        body: JSON.stringify({ identity, theme: { theme, density, radius, motion, welcomeArea } }),
       });
       if (res.ok) {
         setSaved(true);
@@ -192,6 +200,62 @@ export function PersonalizePanel({ defaultName }: Props) {
               </button>
             );
           })}
+        </div>
+      </section>
+
+      {/* 外观细节 */}
+      <section>
+        <div className="mb-3 flex items-center gap-2">
+          <Sparkles className="size-4" style={{ color: "var(--primary)" }} />
+          <h3 className="text-base font-semibold" style={{ color: "var(--foreground)" }}>
+            外观细节
+          </h3>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {[
+            { label: "布局密度", value: density, set: setDensity, options: [["compact", "紧凑"], ["comfortable", "舒适"]] },
+            { label: "圆角风格", value: radius, set: setRadius, options: [["sharp", "利落"], ["soft", "柔和"], ["round", "圆润"]] },
+            { label: "动效强度", value: motion, set: setMotion, options: [["none", "关闭"], ["gentle", "柔和"], ["lively", "活泼"]] },
+          ].map((row) => (
+            <div key={row.label}>
+              <span className="mb-1.5 block text-xs" style={{ color: "var(--muted-foreground)" }}>{row.label}</span>
+              <div className="flex gap-1.5">
+                {row.options.map(([v, label]) => (
+                  <button
+                    key={v}
+                    onClick={() => row.set(v)}
+                    className="flex-1 rounded-[10px] px-2 py-1.5 text-xs"
+                    style={{
+                      border: "1px solid " + (row.value === v ? "var(--primary)" : "var(--border)"),
+                      backgroundColor: row.value === v ? "var(--primary-light)" : "var(--card)",
+                      color: row.value === v ? "var(--primary-deep)" : "var(--muted-foreground)",
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div>
+            <span className="mb-1.5 block text-xs" style={{ color: "var(--muted-foreground)" }}>工作台欢迎区</span>
+            <button
+              onClick={() => setWelcomeArea(!welcomeArea)}
+              className="flex w-full items-center justify-between rounded-[10px] px-3 py-2 text-xs"
+              style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)", color: "var(--foreground)" }}
+            >
+              {welcomeArea ? "显示（时间问候 + 个人标识）" : "隐藏（直接进入工作区）"}
+              <span
+                className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors"
+                style={{ backgroundColor: welcomeArea ? "var(--primary)" : "var(--border)" }}
+              >
+                <span
+                  className="inline-block size-4 rounded-full bg-white transition-transform"
+                  style={{ transform: welcomeArea ? "translateX(18px)" : "translateX(2px)" }}
+                />
+              </span>
+            </button>
+          </div>
         </div>
       </section>
 
