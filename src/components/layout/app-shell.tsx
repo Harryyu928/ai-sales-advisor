@@ -18,6 +18,7 @@ import {
   BarChart3,
   LayoutGrid,
   X,
+  Star,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "客户与资料",
     items: [
       { href: "/customers", label: "客户记录", icon: Users },
+      { href: "/saved-replies", label: "话术资产", icon: Star },
       { href: "/materials", label: "销售资料", icon: FolderOpen },
       { href: "/knowledge", label: "知识库", icon: BookOpen },
     ],
