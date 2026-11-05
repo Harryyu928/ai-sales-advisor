@@ -44,6 +44,9 @@ function buildPrompt(customer: any, facts: any[], messages: any[]): string {
     .map((m) => `[${m.role === "advisor" ? "顾问" : "客户"}] ${m.content?.slice(0, 300)}`)
     .join("\n");
 
+  const customerMsgs = messages.filter((m) => m.role !== "advisor").length;
+  const advisorMsgs = messages.filter((m) => m.role === "advisor").length;
+
   return `你是资深国际教育销售诊断专家。基于以下客户真实微信聊天记录和已确认事实，输出一份结构化销售诊断。
 
 【客户基本信息】
@@ -57,6 +60,10 @@ function buildPrompt(customer: any, facts: any[], messages: any[]): string {
 
 【已确认事实库】
 ${factLines || "（空）"}
+
+【聊天记录统计】
+原始消息共 ${messages.length} 条（客户 ${customerMsgs} 条 + 顾问 ${advisorMsgs} 条）。
+注意：以下列出的是原始消息，不要把"意图数"或"信息点"等同于"消息条数"。evidenceNote 中必须写"基于 ${messages.length} 条原始消息"，不要自己重新数数。
 
 【最近聊天记录】
 ${chatLines || "（无聊天记录）"}
