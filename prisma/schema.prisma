@@ -74,6 +74,8 @@ model User {
   followUpTasks        FollowUpTask[]
   studyPlans           StudyPlan[]
   salesMaterials       SalesMaterial[]
+  personalIdentity     PersonalIdentity?
+  themePreference      UserThemePreference?
 }
 
 model Session {
@@ -511,4 +513,38 @@ model SalesMaterial {
 
   @@index([userId, materialType])
   @@index([userId, favorite])
+}
+
+// ---------- V6.1 个人数字身份（私人 AI 顾问工作室）----------
+model PersonalIdentity {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nickname       String?  // 中文昵称，如 小雅
+  englishName    String?  // 英文显示名，如 Ya
+  monogram       String?  // 专属字母组合，如 YA / HY
+  title          String?  // 职业标签，如 语言规划顾问
+  bio            String?  // 个人简介
+  welcomeMessage String?  // 专属欢迎语
+  signature      String?  // 个人署名
+  avatarMode     String   @default("MONOGRAM") // MONOGRAM 字母徽章 / INITIAL 首字 / SIGNATURE 签名
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ---------- V6.1 个人主题与工作台偏好 ----------
+model UserThemePreference {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme            String   @default("rose-champagne") // rose-champagne 玫瑰香槟 / twilight-berry 暮光莓酒 / moonlight-rose 月光蔷薇 / peach-velvet 蜜桃丝绒
+  density          String   @default("comfortable")   // compact 紧凑 / comfortable 舒展 / spacious 宽松
+  radius           String   @default("soft")          // sharp 利落 / soft 柔和 / round 圆润
+  motion           String   @default("gentle")        // none 关闭 / gentle 轻微
+  welcomeArea      Boolean  @default(true)            // 首页欢迎区是否显示
+  sidebarCollapsed Boolean  @default(false)
+  background       String   @default("rose-desk")     // 欢迎区背景
+  workspaceModules Json?    // 工作台模块显隐与顺序
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }

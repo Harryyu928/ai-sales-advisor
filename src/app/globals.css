@@ -44,55 +44,153 @@
 }
 
 :root {
-  /* === Advisor AI V4.0 轻奢柔雾粉配色 === */
-  --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* === V6.1 Rose Champagne 玫瑰香槟（默认主题）=== */
+  --font-sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC",
+    ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: "Songti SC", "Noto Serif SC", "Georgia", serif;
 
-  /* 主色体系 */
-  --primary: #E65B93;
+  /* 主色：烟熏玫瑰粉 / 深：葡萄酒红 / 浅：香槟粉 */
+  --primary: #B66D87;
   --primary-foreground: #FFFFFF;
-  --primary-deep: #C82E72;
-  --primary-light: #FCE7F0;
-  --primary-soft: #FFF1F6;
+  --primary-deep: #542F43;
+  --primary-light: #F3E3E4;
+  --primary-soft: #FAF0F1;
+  --gold: #B69A76; /* 哑光香槟金点缀 */
 
-  /* 背景 */
-  --background: #FFFAFC;
-  --foreground: #302436;
+  /* 背景：暖象牙白 */
+  --background: #FAF7F4;
+  --foreground: #3E2A35;
 
   /* 卡片 */
   --card: #FFFFFF;
-  --card-foreground: #302436;
+  --card-foreground: #3E2A35;
   --popover: #FFFFFF;
-  --popover-foreground: #302436;
+  --popover-foreground: #3E2A35;
 
   /* 次级区域 */
-  --secondary: #FCE7F0;
-  --secondary-foreground: #C82E72;
-  --muted: #FFF1F6;
-  --muted-foreground: #817786;
-  --accent: #FCE7F0;
-  --accent-foreground: #C82E72;
+  --secondary: #F3E3E4;
+  --secondary-foreground: #542F43;
+  --muted: #F6ECEC;
+  --muted-foreground: #8C7D85;
+  --accent: #F3E3E4;
+  --accent-foreground: #542F43;
 
   /* 危险/错误（保留语义色） */
-  --destructive: #D94052;
+  --destructive: #C0504D;
 
   /* 边框 */
-  --border: #F5E0EC;
-  --input: #F0C8DC;
-  --ring: #E65B93;
+  --border: #E9DDE0;
+  --input: #DEC8CE;
+  --ring: #B66D87;
 
   /* 圆角 */
-  --radius: 0.875rem;
+  --radius: 0.9rem;
 
   /* 侧边栏 */
   --sidebar: #FFFFFF;
-  --sidebar-foreground: #302436;
-  --sidebar-primary: #E65B93;
+  --sidebar-foreground: #3E2A35;
+  --sidebar-primary: #B66D87;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #FCE7F0;
-  --sidebar-accent-foreground: #C82E72;
-  --sidebar-border: #F5E0EC;
-  --sidebar-ring: #E65B93;
+  --sidebar-accent: #F3E3E4;
+  --sidebar-accent-foreground: #542F43;
+  --sidebar-border: #E9DDE0;
+  --sidebar-ring: #B66D87;
+}
+
+/* === V6.1 主题二：暮光莓酒（深莓红 + 香槟金）=== */
+[data-theme="twilight-berry"] {
+  --primary: #9E4B6E;
+  --primary-foreground: #FFFFFF;
+  --primary-deep: #3E1F30;
+  --primary-light: #EAD3DC;
+  --primary-soft: #F5E8EC;
+  --gold: #C2A878;
+  --background: #F7F2F0;
+  --foreground: #34202B;
+  --card: #FFFFFF;
+  --card-foreground: #34202B;
+  --popover: #FFFFFF;
+  --popover-foreground: #34202B;
+  --secondary: #EAD3DC;
+  --secondary-foreground: #3E1F30;
+  --muted: #EFE0E5;
+  --muted-foreground: #7E6B74;
+  --accent: #EAD3DC;
+  --accent-foreground: #3E1F30;
+  --border: #E0C9D2;
+  --input: #CDB0BB;
+  --ring: #9E4B6E;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #34202B;
+  --sidebar-primary: #9E4B6E;
+  --sidebar-accent: #EAD3DC;
+  --sidebar-accent-foreground: #3E1F30;
+  --sidebar-border: #E0C9D2;
+  --sidebar-ring: #9E4B6E;
+}
+
+/* === V6.1 主题三：月光蔷薇（灰紫粉 + 冷白）=== */
+[data-theme="moonlight-rose"] {
+  --primary: #9B7E9E;
+  --primary-foreground: #FFFFFF;
+  --primary-deep: #3E3244;
+  --primary-light: #E7DEE7;
+  --primary-soft: #F2EEF3;
+  --gold: #B8A89A;
+  --background: #F6F6F8;
+  --foreground: #332C38;
+  --card: #FFFFFF;
+  --card-foreground: #332C38;
+  --popover: #FFFFFF;
+  --popover-foreground: #332C38;
+  --secondary: #E7DEE7;
+  --secondary-foreground: #3E3244;
+  --muted: #ECE7EE;
+  --muted-foreground: #7A7280;
+  --accent: #E7DEE7;
+  --accent-foreground: #3E3244;
+  --border: #E0DAE2;
+  --input: #CBC3D0;
+  --ring: #9B7E9E;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #332C38;
+  --sidebar-primary: #9B7E9E;
+  --sidebar-accent: #E7DEE7;
+  --sidebar-accent-foreground: #3E3244;
+  --sidebar-border: #E0DAE2;
+  --sidebar-ring: #9B7E9E;
+}
+
+/* === V6.1 主题四：蜜桃丝绒（低饱和蜜桃 + 暖白）=== */
+[data-theme="peach-velvet"] {
+  --primary: #D08E7E;
+  --primary-foreground: #FFFFFF;
+  --primary-deep: #5C3A34;
+  --primary-light: #F4DFD6;
+  --primary-soft: #FBF0EB;
+  --gold: #C4A882;
+  --background: #FBF6F1;
+  --foreground: #3E2E28;
+  --card: #FFFFFF;
+  --card-foreground: #3E2E28;
+  --popover: #FFFFFF;
+  --popover-foreground: #3E2E28;
+  --secondary: #F4DFD6;
+  --secondary-foreground: #5C3A34;
+  --muted: #F6E8E0;
+  --muted-foreground: #8A766C;
+  --accent: #F4DFD6;
+  --accent-foreground: #5C3A34;
+  --border: #EAD8CF;
+  --input: #D9BFB2;
+  --ring: #D08E7E;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #3E2E28;
+  --sidebar-primary: #D08E7E;
+  --sidebar-accent: #F4DFD6;
+  --sidebar-accent-foreground: #5C3A34;
+  --sidebar-border: #EAD8CF;
+  --sidebar-ring: #D08E7E;
 }
 
 /* 状态色 */
@@ -148,24 +246,25 @@
 }
 
 @layer utilities {
-  /* 品牌色工具 */
-  .text-brand { color: #E65B93; }
-  .text-brand-deep { color: #C82E72; }
-  .bg-brand { background-color: #E65B93; }
-  .bg-brand-light { background-color: #FCE7F0; }
-  .bg-brand-soft { background-color: #FFF1F6; }
-  .border-brand { border-color: #F0C8DC; }
-  .border-brand-subtle { border-color: #F5E0EC; }
+  /* 品牌色工具（引用主题变量，随 data-theme 切换） */
+  .text-brand { color: var(--primary); }
+  .text-brand-deep { color: var(--primary-deep); }
+  .bg-brand { background-color: var(--primary); }
+  .bg-brand-light { background-color: var(--primary-light); }
+  .bg-brand-soft { background-color: var(--primary-soft); }
+  .border-brand { border-color: var(--input); }
+  .border-brand-subtle { border-color: var(--border); }
+  .text-gold { color: var(--gold); }
 
   /* 渐变 */
   .bg-gradient-brand {
-    background: linear-gradient(135deg, #E65B93 0%, #C82E72 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
   }
   .bg-gradient-soft {
-    background: linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-soft) 100%);
   }
   .bg-gradient-page {
-    background: linear-gradient(180deg, #FFF1F6 0%, #FFFAFC 300px);
+    background: linear-gradient(180deg, var(--primary-soft) 0%, var(--background) 320px);
   }
 
   /* 状态色 */
@@ -179,8 +278,8 @@
   }
   .card-lift:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(230, 91, 147, 0.1);
-    border-color: #F0C8DC;
+    box-shadow: 0 8px 24px rgba(182, 109, 135, 0.12);
+    border-color: var(--input);
   }
 
   /* 按钮过渡 */

@@ -1,7 +1,7 @@
 "use client";
 
-// 应用外壳 V4.0：轻奢柔雾粉侧边栏 + 手机底部导航
-// V2.1：桌面端分组导航（9 项）；手机端 4 个常用入口 + 更多菜单
+// 应用外壳 V6.1：Rose Champagne 私人工作室
+// 桌面端分组导航；手机端 4 常用入口 + 更多菜单；主题随用户偏好切换
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -21,6 +21,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Monogram } from "./monogram";
 
 interface NavItem {
   href: string;
@@ -74,14 +75,33 @@ const MOBILE_PRIMARY: NavItem[] = [
 
 interface AppShellProps {
   user: { name: string; email: string; role: string };
+  identity: {
+    nickname: string | null;
+    englishName: string | null;
+    monogram: string | null;
+    title: string | null;
+    welcomeMessage: string | null;
+    avatarMode: string;
+  };
+  theme: {
+    theme: string;
+    density: string;
+    radius: string;
+    motion: string;
+    welcomeArea: boolean;
+    background: string;
+  };
   children: React.ReactNode;
   followUpCount?: number;
 }
 
-export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
+export function AppShell({ user, identity, theme, children, followUpCount = 0 }: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
+
+  const displayName = identity.nickname || user.name;
+  const displayTitle = identity.title || user.role;
 
   async function handleLogout() {
     try {
@@ -99,7 +119,7 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
         {item.badge === "followup" && followUpCount > 0 && (
           <span
             className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-semibold"
-            style={{ backgroundColor: "#E65B93", color: "#FFFFFF" }}
+            style={{ backgroundColor: "var(--primary)", color: "#FFFFFF" }}
           >
             {followUpCount > 99 ? "99+" : followUpCount}
           </span>
@@ -109,26 +129,30 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-dvh" style={{ backgroundColor: "#FFFAFC" }}>
+    <div
+      data-theme={theme.theme}
+      className="min-h-dvh"
+      style={{ backgroundColor: "var(--background)" }}
+    >
       {/* 桌面端侧边导航 */}
       <aside
         className="fixed inset-y-0 left-0 z-30 hidden w-[248px] flex-col md:flex"
-        style={{ backgroundColor: "#FFFFFF", borderRight: "1px solid #F5E0EC" }}
+        style={{ backgroundColor: "var(--card)", borderRight: "1px solid var(--border)" }}
       >
         {/* 品牌区 */}
         <div className="flex h-18 items-center gap-3 px-6 py-5">
           <div
-            className="flex size-10 items-center justify-center rounded-[12px] shadow-sm"
-            style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}
+            className="flex size-10 items-center justify-center rounded-[12px]"
+            style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}
           >
             <Sparkles className="size-5 text-white" />
           </div>
           <div className="leading-tight">
-            <div className="text-[15px] font-semibold" style={{ color: "#302436" }}>
+            <div className="text-[15px] font-semibold" style={{ color: "var(--foreground)" }}>
               Advisor AI
             </div>
-            <div className="text-[11px]" style={{ color: "#817786" }}>
-              销售智能助手
+            <div className="text-[11px]" style={{ color: "var(--muted-foreground)" }}>
+              私人 AI 顾问工作室
             </div>
           </div>
         </div>
@@ -139,7 +163,7 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
             <div key={group.title} className="mb-2">
               <div
                 className="px-3.5 pb-1 pt-2 text-[10px] font-semibold tracking-wider"
-                style={{ color: "#B4A8B8" }}
+                style={{ color: "var(--muted-foreground)", opacity: 0.7 }}
               >
                 {group.title}
               </div>
@@ -154,11 +178,11 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
                       style={
                         active
                           ? {
-                              background: "linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%)",
-                              color: "#C82E72",
+                              background: "linear-gradient(135deg, var(--primary-light) 0%, var(--primary-soft) 100%)",
+                              color: "var(--primary-deep)",
                               fontWeight: 500,
                             }
-                          : { color: "#817786" }
+                          : { color: "var(--muted-foreground)" }
                       }
                     >
                       {renderNavLink(item, active)}
@@ -177,11 +201,11 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
               style={
                 pathname === SETTINGS_ITEM.href
                   ? {
-                      background: "linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%)",
-                      color: "#C82E72",
+                      background: "linear-gradient(135deg, var(--primary-light) 0%, var(--primary-soft) 100%)",
+                      color: "var(--primary-deep)",
                       fontWeight: 500,
                     }
-                  : { color: "#817786" }
+                  : { color: "var(--muted-foreground)" }
               }
             >
               {renderNavLink(SETTINGS_ITEM, pathname === SETTINGS_ITEM.href)}
@@ -189,40 +213,35 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
           </div>
         </nav>
 
-        {/* 底部波浪装饰 + 用户区 */}
+        {/* 底部波浪装饰 + 个人身份区 */}
         <div className="relative">
           <svg
             viewBox="0 0 248 40"
-            className="w-full opacity-40"
+            className="w-full opacity-50"
             preserveAspectRatio="none"
             style={{ height: "32px" }}
           >
             <path
               d="M0,20 Q62,0 124,20 T248,20 L248,40 L0,40 Z"
-              fill="#FCE7F0"
+              fill="var(--primary-light)"
             />
           </svg>
           <div className="px-5 pb-5 pt-2">
             <div className="flex items-center gap-3">
-              <div
-                className="flex size-9 items-center justify-center rounded-full text-sm font-semibold"
-                style={{ background: "linear-gradient(135deg, #FCE7F0 0%, #FFF1F6 100%)", color: "#E65B93" }}
-              >
-                {user.name.slice(0, 1)}
-              </div>
+              <Monogram name={user.name} custom={identity.monogram} size="md" />
               <div className="min-w-0 leading-tight">
-                <div className="truncate text-sm font-medium" style={{ color: "#302436" }}>
-                  {user.name}
+                <div className="truncate text-sm font-medium" style={{ color: "var(--foreground)" }}>
+                  {displayName}
                 </div>
-                <div className="truncate text-[11px]" style={{ color: "#94818D" }}>
-                  教育顾问
+                <div className="truncate text-[11px]" style={{ color: "var(--muted-foreground)" }}>
+                  {displayTitle}
                 </div>
               </div>
             </div>
             <button
               onClick={handleLogout}
               className="mt-3 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs transition-opacity hover:opacity-60"
-              style={{ color: "#94818D" }}
+              style={{ color: "var(--muted-foreground)" }}
             >
               <LogOut className="size-3.5" />
               退出
@@ -234,33 +253,26 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
       {/* 手机端顶栏 */}
       <header
         className="sticky top-0 z-30 flex h-14 items-center justify-between px-4 md:hidden"
-        style={{ backgroundColor: "#FFFFFF", borderBottom: "1px solid #F5E0EC" }}
+        style={{ backgroundColor: "var(--card)", borderBottom: "1px solid var(--border)" }}
       >
         <div className="flex items-center gap-2.5">
           <div
             className="flex size-8 items-center justify-center rounded-[8px]"
-            style={{ background: "linear-gradient(135deg, #E65B93 0%, #C82E72 100%)" }}
+            style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%)" }}
           >
             <Sparkles className="size-4 text-white" />
           </div>
-          <span className="text-sm font-semibold" style={{ color: "#302436" }}>
+          <span className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
             Advisor AI
           </span>
         </div>
-        <button
-          onClick={handleLogout}
-          aria-label="退出"
-          className="flex size-9 items-center justify-center rounded-lg"
-          style={{ color: "#94818D" }}
-        >
-          <LogOut className="size-5" />
-        </button>
+        <Monogram name={user.name} custom={identity.monogram} size="sm" />
       </header>
 
       {/* 主内容区 */}
       <main
         className="pb-24 md:pb-10 md:pl-[248px]"
-        style={{ background: "linear-gradient(180deg, #FFF1F6 0%, #FFFAFC 400px)" }}
+        style={{ background: "linear-gradient(180deg, var(--primary-soft) 0%, var(--background) 400px)" }}
       >
         <div className="mx-auto w-full max-w-6xl px-4 py-6 md:px-8 md:py-8">
           {children}
@@ -271,8 +283,8 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
       <nav
         className="fixed inset-x-0 bottom-0 z-30 border-t md:hidden"
         style={{
-          backgroundColor: "#FFFFFF",
-          borderColor: "#F5E0EC",
+          backgroundColor: "var(--card)",
+          borderColor: "var(--border)",
           paddingBottom: "env(safe-area-inset-bottom)",
         }}
       >
@@ -285,7 +297,7 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
                 href={item.href}
                 className="relative flex flex-col items-center gap-1 py-2.5 text-[11px]"
                 style={{
-                  color: active ? "#E65B93" : "#94818D",
+                  color: active ? "var(--primary)" : "var(--muted-foreground)",
                   fontWeight: active ? 500 : 400,
                 }}
               >
@@ -294,7 +306,7 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
                 {item.badge === "followup" && followUpCount > 0 && (
                   <span
                     className="absolute right-2.5 top-1.5 inline-flex min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-semibold"
-                    style={{ backgroundColor: "#E65B93", color: "#FFFFFF" }}
+                    style={{ backgroundColor: "var(--primary)", color: "#FFFFFF" }}
                   >
                     {followUpCount > 99 ? "99+" : followUpCount}
                   </span>
@@ -305,7 +317,7 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
           <button
             onClick={() => setMoreOpen(true)}
             className="flex flex-col items-center gap-1 py-2.5 text-[11px]"
-            style={{ color: "#94818D" }}
+            style={{ color: "var(--muted-foreground)" }}
           >
             <LayoutGrid className="size-5" />
             更多
@@ -323,20 +335,20 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
           <div
             className="absolute inset-x-0 bottom-0 rounded-t-[24px] px-5 pb-8 pt-4"
             style={{
-              backgroundColor: "#FFFAFC",
+              backgroundColor: "var(--background)",
               paddingBottom: "calc(env(safe-area-inset-bottom) + 24px)",
             }}
           >
-            <div className="mx-auto mb-4 h-1 w-10 rounded-full" style={{ backgroundColor: "#E8DCE4" }} />
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full" style={{ backgroundColor: "var(--border)" }} />
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-semibold" style={{ color: "#302436" }}>
+              <span className="text-sm font-semibold" style={{ color: "var(--foreground)" }}>
                 全部功能
               </span>
               <button
                 onClick={() => setMoreOpen(false)}
                 aria-label="关闭"
                 className="flex size-8 items-center justify-center rounded-full"
-                style={{ backgroundColor: "#FCE7F0", color: "#C82E72" }}
+                style={{ backgroundColor: "var(--primary-light)", color: "var(--primary-deep)" }}
               >
                 <X className="size-4" />
               </button>
@@ -351,9 +363,9 @@ export function AppShell({ user, children, followUpCount = 0 }: AppShellProps) {
                     onClick={() => setMoreOpen(false)}
                     className="flex flex-col items-center gap-2 rounded-[16px] px-2 py-4"
                     style={{
-                      backgroundColor: active ? "#FCE7F0" : "#FFFFFF",
-                      border: "1px solid #F5E0EC",
-                      color: active ? "#C82E72" : "#543C49",
+                      backgroundColor: active ? "var(--primary-light)" : "var(--card)",
+                      border: "1px solid var(--border)",
+                      color: active ? "var(--primary-deep)" : "var(--foreground)",
                     }}
                   >
                     <item.icon className="size-5" />
