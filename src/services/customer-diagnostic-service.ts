@@ -152,6 +152,12 @@ export async function runCustomerDiagnostic(customerId: string, userId: string):
     throw new ApiError(502, "AI 返回格式异常，请重试");
   }
 
+  // 用真实 Customer 字段按固定权重计算完整度，不依赖 AI 自由打分
+  const completenessCalc = calcCompleteness(customer);
+  parsed.completeness = completenessCalc.score;
+  // 把计算依据附加到 summary 后，让前端可展示
+  parsed.summary = `${parsed.summary}｜完整度 ${Math.round(completenessCalc.score * 100)}%（已确认 ${completenessCalc.confirmed}/${completenessCalc.total} 项关键字段）`;
+
   const latencyMs = Date.now() - started;
 
   // 保存诊断快照：旧版本标记非最新
@@ -189,4 +195,43 @@ export async function runCustomerDiagnostic(customerId: string, userId: string):
   });
 
   return { ...parsed, latencyMs, model: result.model };
+}
+
+/**
+ * 基于 Customer 表真实字段按固定权重计算信息完整度。
+ * 不依赖 AI 自由打分，确保可解释、可复现。
+ */
+function calcCompleteness(customer: any): { score: number; confirmed: number; total: number; missing: string[] } {
+  // [字段名, 权重%]
+  const fields: [string, number][] = [
+    ["contactRole", 5],        // 学生/家长身份
+    ["targetCountry", 8],      // 目标国家
+    ["targetSchool", 8],       // 目标院校
+    ["targetMajor", 6],        // 目标专业
+    ["targetExam", 10],        // 目标考试
+    ["targetScore", 8],        // 目标分数
+    ["currentLevel", 8],       // 现有水平
+    ["plannedExamDate", 10],   // 计划考试时间
+    ["plannedEnrollmentDate", 8], // 计划入学时间
+    ["salesStage", 8],         // 咨询阶段
+    ["trainingNeeds", 8],      // 培训需求
+    ["budgetRange", 7],        // 预算
+    ["confirmedNextStep", 6],  // 已确认下一步
+  ];
+
+  let confirmed = 0;
+  const missing: string[] = [];
+  for (const [field, weight] of fields) {
+    const val = customer[field];
+    const has = val !== null && val !== undefined && String(val).trim() !== "";
+    if (has) confirmed += weight;
+    else missing.push(field);
+  }
+
+  return {
+    score: Math.round((confirmed / 100) * 100) / 100,
+    confirmed,
+    total: 100,
+    missing,
+  };
 }
