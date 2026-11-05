@@ -85,14 +85,14 @@ ${chatLines || "（无聊天记录）"}
     "evidenceNote": "这些观察基于多少条消息，证据是否充分"
   },
   "interests": ["从聊天中明确提取的兴趣/关注院校/专业，没有则空数组"],
-  "needs": [{"item":"已明确需求","evidence":"原文证据"}],
+  "needs": [{"item":"已明确需求","evidence":"原文证据","evidenceIndex": 1}],
   "concerns": {
-    "stated": [{"name":"顾虑","evidence":"原文","resolved":"explained|confirmed|pending"}],
+    "stated": [{"name":"顾虑","evidence":"原文","evidenceIndex": 1,"resolved":"explained|confirmed|pending"}],
     "hypotheses": [{"name":"待验证假设","reason":"为什么需要验证"}]
   },
   "unknowns": [{"field":"缺失信息","status":"not_asked|asked_no_answer|conflict","importance":"high|medium|low"}],
   "nextBestQuestion": {"question":"当前最该问的一个问题","why":"为什么","script":"可直接发给客户的微信话术"},
-  "risks": [{"name":"风险","severity":"high|medium|low","evidence":"证据","impact":"可能影响","suggestion":"建议"}],
+  "risks": [{"name":"风险","severity":"high|medium|low","evidence":"证据","evidenceIndex": 1,"impact":"可能影响","suggestion":"建议"}],
   "actions": [{"name":"行动","reason":"原因","script":"微信话术"}],
   "limitations": "数据不足时的诚实说明"
 }
@@ -102,7 +102,8 @@ ${chatLines || "（无聊天记录）"}
 2. 聊天少于10条时，limitations 必须说明"样本较少，观察仅供参考"。
 3. 没有证据的风险不要列。
 4. actions 最多3条。
-5. 所有判断要克制，宁可说"待观察"也不要下确定结论。`;
+5. 所有判断要克制，宁可说"待观察"也不要下确定结论。
+6. evidenceIndex 必须是上面【聊天记录】中该行的序号（从1开始），用于追溯原始消息。`;
 }
 
 export async function runCustomerDiagnostic(customerId: string, userId: string): Promise<CustomerDiagnosticResult & { latencyMs: number; model: string }> {

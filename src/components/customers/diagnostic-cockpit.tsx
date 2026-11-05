@@ -86,12 +86,12 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-function EvidenceQuote({ text }: { text: string }) {
+function EvidenceQuote({ text, idx }: { text: string; idx?: number }) {
   if (!text) return null;
   return (
     <div className="mt-1 flex items-start gap-1 text-xs italic" style={{ color: "var(--muted-foreground)" }}>
       <Quote className="size-3 shrink-0 mt-0.5" style={{ color: "var(--gold)" }} />
-      <span>“{text}”</span>
+      <span>“{text}”{idx && <span className="not-italic ml-1 px-1 rounded" style={{ background: "var(--primary-light)", color: "var(--primary-deep)" }}>第{idx}条</span>}</span>
     </div>
   );
 }
