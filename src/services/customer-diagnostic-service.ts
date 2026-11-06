@@ -171,8 +171,6 @@ export async function runCustomerDiagnostic(customerId: string, userId: string):
   // 用真实 Customer 字段按固定权重计算完整度，不依赖 AI 自由打分
   const completenessCalc = calcCompleteness(customer);
   parsed.completeness = completenessCalc.score;
-  // 把计算依据附加到 summary 后，让前端可展示
-  parsed.summary = `${parsed.summary}｜完整度 ${Math.round(completenessCalc.score * 100)}%（已确认 ${completenessCalc.confirmed}/${completenessCalc.total} 项关键字段）`;
 
   const latencyMs = Date.now() - started;
 

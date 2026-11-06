@@ -315,14 +315,21 @@ export function DiagnosticCockpit({ customerId, customerName }: { customerId: st
 
           {/* 5. 完整度 + 风险概览 */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-              <Ring value={diag.completeness} />
-              <div>
-                <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>信息完整度</p>
-                <p className="text-xs mt-0.5" style={{ color: "var(--foreground)" }}>
-                  {(diag.unknowns || []).filter((u: any) => u.importance === "high").length} 项高优先盲区
-                </p>
+            <div className="rounded-2xl p-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+              <div className="flex items-center gap-3">
+                <Ring value={diag.completeness} />
+                <div>
+                  <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>信息完整度</p>
+                  <p className="text-xs mt-0.5" style={{ color: "var(--foreground)" }}>
+                    {Math.round(diag.completeness * 100)}% 已确认
+                  </p>
+                </div>
               </div>
+              {(diag.unknowns || []).filter((u: any) => u.importance === "high").length > 0 && (
+                <p className="text-xs mt-2 pt-2 border-t" style={{ borderColor: "var(--border)", color: "var(--muted-foreground)" }}>
+                  高优先缺失：{(diag.unknowns || []).filter((u: any) => u.importance === "high").map((u: any) => u.field).join("、")}
+                </p>
+              )}
             </div>
             <div className="rounded-2xl p-3" style={{ background: "var(--card)", border: `1px solid ${closingRisks.length > 0 ? "#C0392B" : "var(--border)"}` }}>
               <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>关单风险</p>
